@@ -1,30 +1,24 @@
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+// We need to import the java.sql package to use JDBC
 import java.sql.*;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+// for reading from the command line
+import java.io.*;
+
+// for the login window
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
 
 public class StadiumSystem implements ActionListener {
 	// command line reader 
     private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    
     private Connection con;
+    
     // user is allowed 3 login attempts
     private int loginAttempts = 3;
+    
     // components of the login window
     private JTextField usernameField;
     private JPasswordField passwordField;
@@ -125,7 +119,7 @@ public class StadiumSystem implements ActionListener {
 	}
 	
 	// Connect to database
-	private boolean connection(String username, String password) {
+	private boolean connect(String username, String password) {
         String connectURL = "jdbc:oracle:thin:@dbhost.students.cs.ubc.ca:1522:stu";
         try {
             con = DriverManager.getConnection(connectURL, username, password);
@@ -141,11 +135,11 @@ public class StadiumSystem implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		if (connection(usernameField.getText(), String.valueOf(passwordField.getPassword()))) {
+		if (connect(usernameField.getText(), String.valueOf(passwordField.getPassword()))) {
             // if the username and password are valid,
             // remove the login window and display a text menu
             mainFrame.dispose();
-            
+            showMenu();
         } else {
             loginAttempts--;
             if (loginAttempts <= 0) {
@@ -157,6 +151,66 @@ public class StadiumSystem implements ActionListener {
             }
         }
 		
+	}
+
+	private void showMenu() {
+		// TODO Auto-generated method stub
+		int choice;
+		boolean quit;
+
+		quit = false;
+		
+		try 
+		{
+		    // disable auto commit mode
+		    con.setAutoCommit(false);
+
+		    while (!quit)
+		    {
+			System.out.print("\n\nPlease choose one of the following: \n");
+			System.out.print("1.  Nico\n");
+			System.out.print("2.  Ethan\n");
+			System.out.print("3.  Joao\n");
+			System.out.print("4.  Kate\n");
+			System.out.print("5.  Quit\n>> ");
+
+			choice = Integer.parseInt(in.readLine());
+			
+			System.out.println(" ");
+
+			switch(choice)
+			{
+			   case 1:  System.out.print("Nico\n"); break;
+			   case 2:  System.out.print("Ethan\n"); break;
+			   case 3:  System.out.print("Joao\n"); break;
+			   case 4:  System.out.print("Kate\n"); break;
+			   case 5:  quit = true;
+			}
+		    }
+
+		    con.close();
+	            in.close();
+		    System.out.println("\nGood Bye!\n\n");
+		    System.exit(0);
+		}
+		catch (IOException e)
+		{
+		    System.out.println("IOException!");
+
+		    try
+		    {
+			con.close();
+			System.exit(-1);
+		    }
+		    catch (SQLException ex)
+		    {
+			 System.out.println("Message: " + ex.getMessage());
+		    }
+		}
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+		}
 	}
 
 }
