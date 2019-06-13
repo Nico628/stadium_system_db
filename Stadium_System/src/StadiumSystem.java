@@ -212,5 +212,10 @@ public class StadiumSystem implements ActionListener {
 		    System.out.println("Message: " + ex.getMessage());
 		}
 	}
+	
+	public static void main(String args[])
+    {
+      StadiumSystem b = new StadiumSystem();
+    }
 
 }
