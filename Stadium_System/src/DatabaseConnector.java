@@ -72,5 +72,6 @@ public class DatabaseConnector extends Observable {
     	String query = "SELECT " + attributes + " FROM " + tableName;
     	SQL2Oracle(query);
     }
+	
 
 }
