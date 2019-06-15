@@ -228,8 +228,9 @@ public class StadiumSystem implements ActionListener {
 		System.out.println("createAFan Testing: " + newFanID + "\n");
 		System.out.println("showAllEvents Testing:");
 		showAllEvents();
-		System.out.println("fansBuyTickets Testing:");
 		fansBuyTickets(2, 100, true, newFanID);
+		System.out.println("showAllFood Testing:");
+		showAllFood(100);
 	}
 
 	// All Guests' Queries
@@ -356,17 +357,27 @@ public class StadiumSystem implements ActionListener {
 
 	private void showAllFood(int event_id) {
 		PreparedStatement ps;
+		String fname = null;
+		int sellingPrice = 0;
 
 		try {
-			ps = con.prepareStatement("SELECT f1.FoodName, f2.SellingPrice" + "FROM Food1 f1, Food2 f2, F_sells fs"
-					+ "WHERE f1.MakingCost = f2.MakingCost " + "AND ? = fs.Event_Id" + "AND fs.FoodName = f1.FoodName"
-					+ "AND f1.Availability = 1" + "ORDER BY f2.SellingPrice");
+			ps = con.prepareStatement("SELECT f1.FoodName, f2.SellingPrice" +
+			"FROM Food1 f1, Food2 f2, F_sells fs" +
+			"WHERE f1.MakingCost = f2.MakingCost AND" +
+			"? = fs.Event_Id AND" +
+			"fs.FoodName = f1.FoodName AND" +
+			"f1.Availability = 1" +
+			"ORDER BY f2.SellingPrice");
+
 			ps.setInt(1, event_id);
 
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
 				// grab data
+				fname = rs.getString("FoodName");
+				sellingPrice = rs.getInt("SellingPrice");
+				System.out.println(fname + " " + sellingPrice);
 			}
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
