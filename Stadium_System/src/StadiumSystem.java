@@ -7,6 +7,9 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.*;
+import java.util.*;
+import java.text.*;
+import java.text.SimpleDateFormat;
 
 public class StadiumSystem implements ActionListener {
 	// command line reader
@@ -148,7 +151,8 @@ public class StadiumSystem implements ActionListener {
 			// if the username and password are valid,
 			// remove the login window and display a text menu
 			mainFrame.dispose();
-			mainWindow();
+			testing();
+			//mainWindow();
 
 		} else {
 			loginAttempts--;
@@ -222,85 +226,31 @@ public class StadiumSystem implements ActionListener {
 		StadiumSystem ss = new StadiumSystem();
 	}
 
+	private void testing() {
+		int newFanID = createAFan();
+		System.out.println("createAFan Testing: " + newFanID + "\n");
+		System.out.println("showAllEvents Testing:");
+		showAllEvents();
+		fansBuyTickets(2, 100, true, newFanID);
+		System.out.println("showAllFood Testing:");
+		showAllFood(100);
+	}
+
 	// All Guests' Queries
-	// A. Create ticket seat sequence:
-	private void createTicketSeatSeq() {
-		PreparedStatement ps;
-
-		try {
-			ps = con.prepareStatement(
-					"CREATE SEQUENCE normal_seat_counter START WITH -1 INCREMENT BY 1 MAXVALUE 799 NOCYCLE");
-			ps.executeUpdate();
-
-			// commit work
-			con.commit();
-
-			ps = con.prepareStatement(
-					"CREATE SEQUENCE vip_seat_counter START WITH 799 INCREMENT BY 1 MAXVALUE 999 NOCYCLE");
-			ps.executeUpdate();
-
-			// commit work
-			con.commit();
-		} catch (SQLException ex) {
-			System.out.println("Message: " + ex.getMessage());
-		}
-	}
-
-	// B. Create FanID sequence
-	private void createFanIDSeq() {
-		PreparedStatement ps;
-
-		try {
-			ps = con.prepareStatement(
-					"CREATE SEQUENCE fanID_counter START WITH -1 INCREMENT BY 1 MAXVALUE 10000 NOCYCLE");
-			ps.executeUpdate();
-
-			// commit work
-			con.commit();
-
-		} catch (SQLException ex) {
-			System.out.println("Message: " + ex.getMessage());
-		}
-	}
-
-	// C. Create parking space sequence:
-	private void createParkingSpaceSeq() {
-		PreparedStatement ps;
-
-		try {
-			ps = con.prepareStatement(
-					"CREATE SEQUENCE normal_parking_counter START WITH 199 INCREMENT BY 1 MAXVALUE 999 NOCYCLE");
-			ps.executeUpdate();
-
-			// commit work
-			con.commit();
-
-			ps = con.prepareStatement(
-					"CREATE SEQUENCE disabled_parking_counter START WITH -1 INCREMENT BY 1 MAXVALUE 199 NOCYCLE");
-			ps.executeUpdate();
-
-			// commit work
-			con.commit();
-		} catch (SQLException ex) {
-			System.out.println("Message: " + ex.getMessage());
-		}
-	}
-
 	// 1. Create Fan:
 	// Fans(Fan_ID, Phone_no, Fname, CreditCardInfo)
 	private int createAFan() {
 		int fanID = 0;
 		try {
+			con.setAutoCommit(false);
 			Statement stmt = con.createStatement();
 			int rowCount = stmt.executeUpdate("INSERT INTO Fans VALUES (fanID_counter.nextval, 'xxx', 'yyy', 'zzz')");
 			con.commit();
 
-			ResultSet rs = stmt.executeQuery("SELECT * FROM Fans WHERE Fan_ID = fanID_counter.currval"); // Get
-																											// FanID*********
-
-			while (rs.next()) {
+			ResultSet rs = stmt.executeQuery("SELECT fanID_counter.currval FROM dual");
+			// Get FanID*********
+			if(rs.next())
 				fanID = rs.getInt(1);
-			}
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
@@ -311,14 +261,47 @@ public class StadiumSystem implements ActionListener {
 	// 2. Show all events:
 	// Stadium_Events(Event_id, StartTime, EndTime, TicketSold, Edate)
 	private void showAllEvents() {
+		int eid = 0;
+		String ename = null;
+		// String stringDate = new String("18/08/01");
+		// SimpleDateFormat fm = new SimpleDateFormat("dd/MM/yy");
+		String stringTS = new String("2001-05-18 08:15:00");
+		SimpleDateFormat tm = new SimpleDateFormat("yyyy-MM-dd H:mm:ss");
+		// java.util.Date utilDate = null;
+		java.util.Date utilTS1 = null;
+		java.util.Date utilTS2 = null;
+		try {
+			// utilDate = fm.parse(stringDate);
+			utilTS1 = tm.parse(stringTS);
+			utilTS2 = tm.parse(stringTS);
+		} catch(ParseException pe) {
+			System.out.println("Message: " + pe.getMessage());
+		}
+
+		// java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+		java.sql.Timestamp sqlTS1 = new java.sql.Timestamp(utilTS1.getTime());
+		java.sql.Timestamp sqlTS2 = new java.sql.Timestamp(utilTS2.getTime());
+
 		try {
 			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT Event_id, EName, Edate, StartTime, EndTime" // Get
-																									// event_id*********
-					+ "FROM Stadium_Events" + "WHERE Edate >= sysdate" + "ORDER BY Edate");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM Stadium_Events WHERE Edate >= SYSDATE ORDER BY Edate");
+			// get eventID
 
 			while (rs.next()) {
 				// grab data
+				eid = rs.getInt("Event_id");
+				ename = rs.getString("EventName");
+
+				sqlTS1 = rs.getTimestamp("StartTime");
+				utilTS1.setTime(sqlTS1.getTime());
+				sqlTS2 = rs.getTimestamp("EndTime");
+				utilTS2.setTime(sqlTS2.getTime());
+
+				System.out.println(eid  + ", " + ename + " " + tm.format(utilTS1) + " " + tm.format(utilTS2));
+
+				// sqlDate = rs.getDate("Edate");
+				// utilDate.setTime(sqlDate.getTime());
+				// System.out.println(" " + fm.format(utilDate));
 			}
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
@@ -377,17 +360,27 @@ public class StadiumSystem implements ActionListener {
 
 	private void showAllFood(int event_id) {
 		PreparedStatement ps;
+		String fname = null;
+		int sellingPrice = 0;
 
 		try {
-			ps = con.prepareStatement("SELECT f1.FoodName, f2.SellingPrice" + "FROM Food1 f1, Food2 f2, F_sells fs"
-					+ "WHERE f1.MakingCost = f2.MakingCost " + "AND ? = fs.Event_Id" + "AND fs.FoodName = f1.FoodName"
-					+ "AND f1.Availability = 1" + "ORDER BY f2.SellingPrice");
+			ps = con.prepareStatement("SELECT f1.FoodName, f2.SellingPrice" +
+			"FROM Food1 f1, Food2 f2, F_sells fs" +
+			"WHERE f1.MakingCost = f2.MakingCost AND" +
+			"? = fs.Event_Id AND" +
+			"fs.FoodName = f1.FoodName AND" +
+			"f1.Availability = 1" +
+			"ORDER BY f2.SellingPrice");
+
 			ps.setInt(1, event_id);
 
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
 				// grab data
+				fname = rs.getString("FoodName");
+				sellingPrice = rs.getInt("SellingPrice");
+				System.out.println(fname + " " + sellingPrice);
 			}
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
