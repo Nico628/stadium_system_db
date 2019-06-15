@@ -21,7 +21,16 @@ public class StadiumSystem implements ActionListener {
 	private JPasswordField passwordField;
 	private JFrame mainFrame;
 	private JFrame stadiumFrame;
+    private boolean logInSuccess = false;
 
+    //Indexed some stuff for easy ctrl+f traversal
+    //!!!: Constructor
+    //???: main
+    //111: guest queries
+    //222: manager queries
+
+    // constructor of login & driver loading, registration
+    // !!!
 	// constructor of login & driver loading, registration
 	public StadiumSystem() {
 		oracleLogin();
@@ -33,6 +42,16 @@ public class StadiumSystem implements ActionListener {
 			System.out.println("Message: " + ex.getMessage());
 			System.exit(-1);
 		}
+
+		// Don't delete pls
+        // alternate try/catch
+		/*
+           try {
+                Class.forName("oracle.jdbc.driver.OracleDriver");
+            } catch (Exception e) {
+                System.out.println("Error");
+            }
+		 */
 	}
 
 	// oracle login
@@ -207,8 +226,14 @@ public class StadiumSystem implements ActionListener {
 
 	}
 
+	//???
 	public static void main(String args[]) {
 		StadiumSystem ss = new StadiumSystem();
+
+        // currently displays UI whether login is successful or not
+        // I have added a new variable logInSuccess at top.
+        // Eventually we will have to check whether login is successful or not.
+        OptionSelector os = new OptionSelector();
 	}
 
 	private void testing() {
@@ -234,7 +259,8 @@ public class StadiumSystem implements ActionListener {
 
 	}
 
-	// All Guests' Queries
+	//111
+	//============================================== All Guests' Queries================================================
 	// 1. Create Fan:
 	// Fans(Fan_ID, Phone_no, Fname, CreditCardInfo)
 	private int createAFan() {
@@ -516,6 +542,10 @@ public class StadiumSystem implements ActionListener {
 			}
 		}
 	}
+
+    //222
+	//Manager queries
+    //============================================== All Guests' Queries================================================
 
 	// QUIT PROGRAM:
 	private void allDone() {
