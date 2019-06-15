@@ -233,7 +233,7 @@ public class StadiumSystem implements ActionListener {
         // currently displays UI whether login is successful or not
         // I have added a new variable logInSuccess at top.
         // Eventually we will have to check whether login is successful or not.
-        OptionSelector os = new OptionSelector();
+        //OptionSelector os = new OptionSelector();
 	}
 
 	private void testing() {
@@ -247,16 +247,26 @@ public class StadiumSystem implements ActionListener {
 		System.out.println("\n");
 
 		// fans buy tickets
-		fansBuyTickets(2, 100, true, newFanID);
+		fansBuyTickets(2, 100, false, newFanID);
 
 		// show all food selling in that event
 		System.out.println("showAllFood Testing:");
 		showAllFood(100);
+		System.out.println("\n");
 
 		// fans buy food
 		fansBuyFood(3, 100, "Hotdog", newFanID);
 
+		// show all Merchandise
+		System.out.println("showAllMerchandise Testing:");
+		showAllMerchandise(100);
+		System.out.println("\n");
 
+		// fans buy merchandise
+		fansBuyMerchandise(2, 100, "Wallet", newFanID);
+
+		// fans parking
+		fansParking(newFanID, false, 1);
 	}
 
 	//111
@@ -388,12 +398,7 @@ public class StadiumSystem implements ActionListener {
 		int sellingPrice = 0;
 
 		try {
-			// ps = con.prepareStatement("SELECT f1.FoodName, f2.SellingPrice" +
-			// "FROM F_sells fs NATURAL JOIN Food1 f1 NATURAL JOIN Food2 f2" +
-			// "WHERE ? = Event_Id AND Availability = 1" +
-			// "ORDER BY f2.SellingPrice");
-
-			ps = con.prepareStatement("SELECT FoodName, SellingPrice FROM F_sells fs JOIN (SELECT f1.FoodName, f2.SellingPrice FROM Food1 f1 JOIN Food2 f2 USING (MakingCost) WHERE Availability = 1) USING (FoodName) WHERE ? = Event_Id");
+			ps = con.prepareStatement("SELECT FoodName, SellingPrice FROM F_sells fs JOIN (SELECT FoodName, SellingPrice FROM Food1 JOIN Food2 USING (MakingCost) WHERE Availability = 1) USING (FoodName) WHERE ? = Event_Id");
 
 			ps.setInt(1, event_id);
 
@@ -418,7 +423,7 @@ public class StadiumSystem implements ActionListener {
 		PreparedStatement ps;
 
 		try {
-			ps = con.prepareStatement("UPDATE F_sells SET Quantity = ? + Quantity WHERE Event_Id = ? AND FoodName = ?");
+			ps = con.prepareStatement("UPDATE F_sells SET Quantity = Quantity + ? WHERE Event_Id = ? AND rtrim(FoodName) = ?");
 			ps.setInt(1, num);
 			ps.setInt(2, event_id);
 			ps.setString(3, foodName);
@@ -449,18 +454,21 @@ public class StadiumSystem implements ActionListener {
 
 	private void showAllMerchandise(int event_id) {
 		PreparedStatement ps;
+		String mname = null;
+		int sellingPrice = 0;
 
 		try {
-			ps = con.prepareStatement(
-					"SELECT m1.MName, m2.SellingPrice" + "FROM Merchandise1 m1, Merchandise2 m2, M_sells ms"
-							+ "WHERE m1.MakingCost = m2.MakingCost " + "AND ? = ms.Event_Id" + "AND ms.MName = m1.MName"
-							+ "AND m1.Availability = 1" + "ORDER BY m2.SellingPrice");
+			ps = con.prepareStatement("SELECT MName, SellingPrice FROM M_sells JOIN (SELECT MName, SellingPrice FROM Merchandise1 m1 JOIN Merchandise2 m2 USING (MakingCost) WHERE Availability = 1) USING (MName) WHERE ? = Event_Id");
+
 			ps.setInt(1, event_id);
 
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
 				// grab data
+				mname = rs.getString("MName");
+				sellingPrice = rs.getInt("SellingPrice");
+				System.out.println(mname + " " + sellingPrice);
 			}
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
@@ -475,8 +483,7 @@ public class StadiumSystem implements ActionListener {
 		PreparedStatement ps;
 
 		try {
-			ps = con.prepareStatement("UPDATE M_sells SET Quantity = (SELECT Quantity FROM M_sells) + ?"
-					+ "WHERE Event_Id = ? AND MName = ?");
+			ps = con.prepareStatement("UPDATE M_sells SET Quantity = Quantity + ? WHERE Event_Id = ? AND rtrim(MName) = ?");
 
 			ps.setInt(1, num);
 			ps.setInt(2, event_id);
@@ -503,7 +510,7 @@ public class StadiumSystem implements ActionListener {
 
 	// 8. Fans Parking
 	// Fans(Fan_ID, Phone_no, Fname, CreditCardInfo)
-	// ParkingSpace(Floor_no, Lot_no, Availability, Type, Fan_ID)
+	// ParkingSpace(Floor_no, Lot_no, Availability, Fan_ID, Disabled)
 
 	private void fansParking(int fanID, Boolean disabled, int num) {
 		PreparedStatement ps = null;
@@ -513,7 +520,7 @@ public class StadiumSystem implements ActionListener {
 				for (int i = 0; i < num; i++) {
 					ps = con.prepareStatement(
 							"INSERT INTO ParkingSpace VALUES(" + "disabled_parking_counter.nextval/100, "
-									+ "MOD(disabled_parking_counter.currval, 100)," + "0, 1, ?)");
+									+ "MOD(disabled_parking_counter.currval, 100)," + "0, ?, 1)");
 					ps.setInt(1, fanID);
 
 					ps.executeUpdate();
@@ -529,7 +536,7 @@ public class StadiumSystem implements ActionListener {
 				for (int i = 0; i < num; i++) {
 					ps = con.prepareStatement(
 							"INSERT INTO ParkingSpace VALUES(" + "normal_parking_counter.nextval/100, "
-									+ "MOD(normal_parking_counter.currval, 100)," + "0, 0, ?)");
+									+ "MOD(normal_parking_counter.currval, 100)," + "0, ?, 0)");
 					ps.setInt(1, fanID);
 
 					ps.executeUpdate();
