@@ -23,16 +23,16 @@ public class DatabaseConnector extends Observable {
 
     public static DatabaseConnector getInstance() throws SQLException{
         if(instance == null){
-            instance = new DatabaseConnector();
-        }
+    instance = new DatabaseConnector();
+}
         return instance;
-    }
+                }
 
-    public boolean connection(String username, String password) throws SQLException{
+public boolean connection(String username, String password) throws SQLException{
         String url = "jdbc:oracle:thin:@dbhost.students.cs.ubc.ca:1522:stu";
         connection = DriverManager.getConnection(url, username, password);
         return true;
-    }
+        }
     
     public void quit() throws SQLException{
         if(connection == null){

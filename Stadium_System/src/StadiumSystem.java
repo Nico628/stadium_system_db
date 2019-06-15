@@ -1,8 +1,5 @@
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Rectangle;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -10,14 +7,6 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.*;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 
 public class StadiumSystem implements ActionListener {
 	// command line reader
@@ -35,14 +24,28 @@ public class StadiumSystem implements ActionListener {
 	public StadiumSystem() {
 		oracleLogin();
 
-		// Load & register the Oracle JDBC driver
+		// Load & register the Oracle JDBC driver\
+
+
+            try {
+                Class.forName("oracle.jdbc.driver.OracleDriver");
+            } catch (Exception e) {
+                System.out.println("Error");
+            }
+
+        }
+        /*
+
 		try {
-			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+            DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 			System.exit(-1);
 		}
+
+
 	}
+	*/
 
 	// oracle login
 	private void oracleLogin() {
@@ -525,6 +528,7 @@ public class StadiumSystem implements ActionListener {
 		}
 	}
 
+	//All Manager's Queries
 	// QUIT PROGRAM:
 	private void allDone() {
 		return;
