@@ -224,13 +224,26 @@ public class StadiumSystem implements ActionListener {
 	}
 
 	private void testing() {
+		// create fan id
 		int newFanID = createAFan();
 		System.out.println("createAFan Testing: " + newFanID + "\n");
+
+		// show all events
 		System.out.println("showAllEvents Testing:");
 		showAllEvents();
+		System.out.println("\n");
+
+		// fans buy tickets
 		fansBuyTickets(2, 100, true, newFanID);
+
+		// show all food selling in that event
 		System.out.println("showAllFood Testing:");
 		showAllFood(100);
+
+		// fans buy food
+		fansBuyFood(3, 100, "Hotdog", newFanID);
+
+
 	}
 
 	// All Guests' Queries
@@ -361,13 +374,12 @@ public class StadiumSystem implements ActionListener {
 		int sellingPrice = 0;
 
 		try {
-			ps = con.prepareStatement("SELECT f1.FoodName, f2.SellingPrice" +
-			"FROM Food1 f1, Food2 f2, F_sells fs" +
-			"WHERE f1.MakingCost = f2.MakingCost AND" +
-			"? = fs.Event_Id AND" +
-			"fs.FoodName = f1.FoodName AND" +
-			"f1.Availability = 1" +
-			"ORDER BY f2.SellingPrice");
+			// ps = con.prepareStatement("SELECT f1.FoodName, f2.SellingPrice" +
+			// "FROM F_sells fs NATURAL JOIN Food1 f1 NATURAL JOIN Food2 f2" +
+			// "WHERE ? = Event_Id AND Availability = 1" +
+			// "ORDER BY f2.SellingPrice");
+
+			ps = con.prepareStatement("SELECT FoodName, SellingPrice FROM F_sells fs JOIN (SELECT f1.FoodName, f2.SellingPrice FROM Food1 f1 JOIN Food2 f2 USING (MakingCost) WHERE Availability = 1) USING (FoodName) WHERE ? = Event_Id");
 
 			ps.setInt(1, event_id);
 
@@ -392,8 +404,7 @@ public class StadiumSystem implements ActionListener {
 		PreparedStatement ps;
 
 		try {
-			ps = con.prepareStatement("UPDATE F_sells SET Quantity = (SELECT Quantity FROM F_sells) + ?"
-					+ "WHERE Event_Id = ? AND FoodName = ?");
+			ps = con.prepareStatement("UPDATE F_sells SET Quantity = ? + Quantity WHERE Event_Id = ? AND FoodName = ?");
 			ps.setInt(1, num);
 			ps.setInt(2, event_id);
 			ps.setString(3, foodName);
