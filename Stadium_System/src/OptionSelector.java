@@ -27,6 +27,7 @@ public class OptionSelector {
 	private Connection con;
 	private int newFanID;
 	private int eventID;
+	private String foodName;
 
 	public OptionSelector(Connection conn) {
 		this.con = conn;
@@ -134,7 +135,7 @@ public class OptionSelector {
 		int numOfTickets = 0;
 		boolean vip = false;
 
-		System.out.println("Select the event you would like to attend to:");
+		System.out.println("Select the Event You Would Like to Attend to:");
 		// list out events
 		ArrayList<Integer> eList = showAllEvents();
 		int rowCount = eList.size();
@@ -186,8 +187,6 @@ public class OptionSelector {
 			input = scan.nextInt();
 		}
 
-		System.out.println(numOfTickets + " " + eventID + " " + vip + " " + newFanID);
-
 		// ===========fans buy tickets==============
 		if (input == 1) {
 			fansBuyTickets(numOfTickets, eventID, vip, newFanID);
@@ -198,9 +197,74 @@ public class OptionSelector {
 
 	// iterate through food in database and list them for customers to see
 	private void listFood() {
-		System.out.println("Which food item would you like to purchase?");
-		// TODO: Add Food query
+		int rowCount = 0;
+		int numOfFood = 0;
+		System.out.println("Select the Event You are Attending to:");
+		// list out events
+		ArrayList<Integer> eList = showAllEvents();
+		rowCount = eList.size();
+		System.out.println("0: Return.");
+		input = scan.nextInt();
 
+		while (input < 0 || input > rowCount) { // incorrect input
+			System.out.println("Please Enter a Valid Number:");
+			input = scan.nextInt();
+		}
+
+		// ========Get the eventID==========
+		if (input == 0) {
+			return;
+		} else {
+			eventID = eList.get(input - 1);
+		}
+
+		System.out.println("Select the Food Item You Would Like to Purchase:");
+		// ====================list all food items================
+		ArrayList<String> fList = showAllFood(eventID);
+		rowCount = fList.size();
+		System.out.println("0: Return.");
+		input = scan.nextInt();
+
+		while (input < 0 || input > rowCount) { // incorrect input
+			System.out.println("Please Enter a Valid Number:");
+			input = scan.nextInt();
+		}
+
+		// ========Get the food item name==========
+		if (input == 0) {
+			return;
+		} else {
+			foodName = fList.get(input - 1);
+		}
+
+		// =======Ask for how many items========
+		System.out.println("Enter the Number of the Food Items You Want to Purchase:");
+		input = scan.nextInt();
+
+		while (input < 1 || input > 99) {
+			System.out.println("Please Enter a Valid Number:");
+			input = scan.nextInt();
+		}
+
+		numOfFood = input;
+
+		// ============confirmation of purchase=======
+		System.out.println("Enter 1 to Confirm Your Purchase, 0 to Return:");
+		input = scan.nextInt();
+
+		while (input < 0 || input > 1) {
+			System.out.println("Please Enter a Valid Number:");
+			input = scan.nextInt();
+		}
+
+		System.out.println(numOfFood + " " + eventID + " " + foodName + " " + newFanID);
+
+		// ===========fans buy tickets==============
+		if (input == 1) {
+			fansBuyFood(numOfFood, eventID, foodName, newFanID);
+		} else {
+			return;
+		}
 	}
 
 	// iterate through merchandise in database and list them for customers to see
@@ -514,10 +578,12 @@ public class OptionSelector {
 	// Food2(MakingCost, SellingPrice)
 	// F_sells(Event_Id, FoodName, Quantity)
 
-	private void showAllFood(int event_id) {
+	private ArrayList<String> showAllFood(int event_id) {
 		PreparedStatement ps;
 		String fname = null;
 		int sellingPrice = 0;
+		int rowCount = 1;
+		ArrayList<String> fn = new ArrayList<String>();
 
 		try {
 			ps = con.prepareStatement(
@@ -530,12 +596,16 @@ public class OptionSelector {
 			while (rs.next()) {
 				// grab data
 				fname = rs.getString("FoodName");
+				fn.add(fname);
 				sellingPrice = rs.getInt("SellingPrice");
-				System.out.println(fname + " " + sellingPrice);
+				System.out.println(rowCount + ". " + fname + "  $" + sellingPrice);
+				rowCount++;
 			}
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
+
+		return fn;
 	}
 
 	// 5. Fans buy Food
@@ -544,6 +614,7 @@ public class OptionSelector {
 
 	private void fansBuyFood(int num, int event_id, String foodName, int fanID) {
 		PreparedStatement ps;
+		int quan = -1;
 
 		try {
 			ps = con.prepareStatement(
@@ -557,15 +628,38 @@ public class OptionSelector {
 			// commit work
 			con.commit();
 
-			ps = con.prepareStatement("INSERT INTO F_buys VALUES (?,?,?)");
+			ps = con.prepareStatement("SELECT * FROM F_buys WHERE Fan_ID = ? AND FoodName = ?");
 			ps.setInt(1, fanID);
 			ps.setString(2, foodName);
-			ps.setInt(3, num);
+			ResultSet rs = ps.executeQuery();
 
-			ps.executeUpdate();
+			if (rs.next())
+				quan = rs.getInt("Quantity");
 
-			// commit work
-			con.commit();
+			if (quan == -1) {
+				ps = con.prepareStatement("INSERT INTO F_buys VALUES (?,?,?)");
+
+				ps.setInt(1, fanID);
+				ps.setString(2, foodName);
+				ps.setInt(3, num);
+
+				ps.executeUpdate();
+
+				// commit work
+				con.commit();
+			} else {
+				System.out.println("Updating Quantity" + quan);
+				ps = con.prepareStatement(
+						"UPDATE F_buys SET Quantity = Quantity + ? WHERE Fan_ID = ? AND FoodName = ?");
+				ps.setInt(1, num);
+				ps.setInt(2, fanID);
+				ps.setString(3, foodName);
+
+				ps.executeUpdate();
+
+				// commit work
+				con.commit();
+			}
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
