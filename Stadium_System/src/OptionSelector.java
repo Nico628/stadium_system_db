@@ -28,6 +28,7 @@ public class OptionSelector {
 	private int newFanID;
 	private int eventID;
 	private String foodName;
+	private String merchName;
 
 	public OptionSelector(Connection conn) {
 		this.con = conn;
@@ -269,9 +270,74 @@ public class OptionSelector {
 
 	// iterate through merchandise in database and list them for customers to see
 	private void listMerchandise() {
-		System.out.println("Which event ticket would you like to purchase?");
-		// TODO: Add Merchandise query
+		int rowCount = 0;
+		int numOfMerch = 0;
+		System.out.println("Select the Event You are Attending to:");
+		// list out events
+		ArrayList<Integer> eList = showAllEvents();
+		rowCount = eList.size();
+		System.out.println("0: Return.");
+		input = scan.nextInt();
 
+		while (input < 0 || input > rowCount) { // incorrect input
+			System.out.println("Please Enter a Valid Number:");
+			input = scan.nextInt();
+		}
+
+		// ========Get the eventID==========
+		if (input == 0) {
+			return;
+		} else {
+			eventID = eList.get(input - 1);
+		}
+
+		System.out.println("Select the Merchandise Item You Would Like to Purchase:");
+		// ====================list all Merchandise items================
+		ArrayList<String> mList = showAllMerchandise(eventID);
+		rowCount = mList.size();
+		System.out.println("0: Return.");
+		input = scan.nextInt();
+
+		while (input < 0 || input > rowCount) { // incorrect input
+			System.out.println("Please Enter a Valid Number:");
+			input = scan.nextInt();
+		}
+
+		// ========Get the Merchandise item name==========
+		if (input == 0) {
+			return;
+		} else {
+			merchName = mList.get(input - 1);
+		}
+
+		// =======Ask for how many items========
+		System.out.println("Enter the Number of the Merchandise Items You Want to Purchase:");
+		input = scan.nextInt();
+
+		while (input < 1 || input > 99) {
+			System.out.println("Please Enter a Valid Number:");
+			input = scan.nextInt();
+		}
+
+		numOfMerch = input;
+
+		// ============confirmation of purchase=======
+		System.out.println("Enter 1 to Confirm Your Purchase, 0 to Return:");
+		input = scan.nextInt();
+
+		while (input < 0 || input > 1) {
+			System.out.println("Please Enter a Valid Number:");
+			input = scan.nextInt();
+		}
+
+		System.out.println(numOfMerch + " " + eventID + " " + merchName + " " + newFanID);
+
+		// ===========fans buy merchandise==============
+		if (input == 1) {
+			fansBuyMerchandise(numOfMerch, eventID, merchName, newFanID);
+		} else {
+			return;
+		}
 	}
 
 	// iterate through open parking spots in database and list them for customers to
@@ -648,7 +714,6 @@ public class OptionSelector {
 				// commit work
 				con.commit();
 			} else {
-				System.out.println("Updating Quantity" + quan);
 				ps = con.prepareStatement(
 						"UPDATE F_buys SET Quantity = Quantity + ? WHERE Fan_ID = ? AND FoodName = ?");
 				ps.setInt(1, num);
@@ -670,10 +735,12 @@ public class OptionSelector {
 	// Merchandise2(MakingCost, SellingPrice)
 	// M_sells(Event_Id, MName, Quantity)
 
-	private void showAllMerchandise(int event_id) {
+	private ArrayList<String> showAllMerchandise(int event_id) {
 		PreparedStatement ps;
 		String mname = null;
 		int sellingPrice = 0;
+		ArrayList<String> MN = new ArrayList<String>();
+		int rowCount = 1;
 
 		try {
 			ps = con.prepareStatement(
@@ -686,12 +753,15 @@ public class OptionSelector {
 			while (rs.next()) {
 				// grab data
 				mname = rs.getString("MName");
+				MN.add(mname);
 				sellingPrice = rs.getInt("SellingPrice");
-				System.out.println(mname + " " + sellingPrice);
+				System.out.println(rowCount + ". " + mname + "  $" + sellingPrice);
+				rowCount++;
 			}
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
+		return MN;
 	}
 
 	// 7. Fans buy Merchandise
@@ -700,6 +770,7 @@ public class OptionSelector {
 
 	private void fansBuyMerchandise(int num, int event_id, String MName, int fanID) {
 		PreparedStatement ps;
+		int quan = -1;
 
 		try {
 			ps = con.prepareStatement(
@@ -714,15 +785,36 @@ public class OptionSelector {
 			// commit work
 			con.commit();
 
-			ps = con.prepareStatement("INSERT INTO M_buys VALUES(?,?,?)");
+			ps = con.prepareStatement("SELECT * FROM M_buys WHERE Fan_ID = ? AND MName = ?");
 			ps.setInt(1, fanID);
 			ps.setString(2, MName);
-			ps.setInt(3, num);
+			ResultSet rs = ps.executeQuery();
 
-			ps.executeUpdate();
+			if (rs.next())
+				quan = rs.getInt("Quantity");
 
-			// commit work
-			con.commit();
+			if (quan == -1) {
+				ps = con.prepareStatement("INSERT INTO M_buys VALUES (?,?,?)");
+
+				ps.setInt(1, fanID);
+				ps.setString(2, MName);
+				ps.setInt(3, num);
+
+				ps.executeUpdate();
+
+				// commit work
+				con.commit();
+			} else {
+				ps = con.prepareStatement("UPDATE M_buys SET Quantity = Quantity + ? WHERE Fan_ID = ? AND MName = ?");
+				ps.setInt(1, num);
+				ps.setInt(2, fanID);
+				ps.setString(3, MName);
+
+				ps.executeUpdate();
+
+				// commit work
+				con.commit();
+			}
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
