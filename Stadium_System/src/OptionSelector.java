@@ -48,6 +48,7 @@ public class OptionSelector {
 
 		while (repeat) {
 			System.out.println("1. New Guest \n" + "2. Old Guest \n" + "3. Manager \n" + "4. Exit application");
+			System.out.print("Input: ");
 
 			input = scan.nextInt();
 			switch (input) {
@@ -85,6 +86,7 @@ public class OptionSelector {
 			newFanID = createAFan();
 		else { // prompt for old ID
 			System.out.println("Please Enter Your ID:");
+			System.out.print("Input: ");
 			input = scan.nextInt();
 
 			fanCheck = checkForExistingFan(input);
@@ -92,6 +94,7 @@ public class OptionSelector {
 			// deal with invalid ID
 			while (input < 0 || input > 10000 || fanCheck == false) {
 				System.out.println("Please Enter a Valid ID:");
+				System.out.print("Input: ");
 				input = scan.nextInt();
 				fanCheck = checkForExistingFan(input);
 			}
@@ -106,7 +109,7 @@ public class OptionSelector {
 			System.out
 					.println("What would you like to do today?\n" + "1. Purchase event tickets\n" + "2. Purchase food\n"
 							+ "3. Purchase merchandise\n" + "4. Request for parking\n" + "5. Go Back to Menu");
-
+			System.out.print("Input: ");
 			input = scan.nextInt();
 
 			switch (input) {
@@ -141,10 +144,12 @@ public class OptionSelector {
 		ArrayList<Integer> eList = showAllEvents();
 		int rowCount = eList.size();
 		System.out.println("0: Return.");
+		System.out.print("Input: ");
 		input = scan.nextInt();
 
 		while (input < 0 || input > rowCount) { // incorrect input
 			System.out.println("Please Enter a Valid Number:");
+			System.out.print("Input: ");
 			input = scan.nextInt();
 		}
 
@@ -157,10 +162,12 @@ public class OptionSelector {
 
 		// =======Ask for what type of tickets======
 		System.out.println("Enter 1 For VIP Ticket, 0 For Normal Ticket:");
+		System.out.print("Input: ");
 		input = scan.nextInt();
 
 		while (input < 0 || input > 1) {
 			System.out.println("Please Enter a Valid Number:");
+			System.out.print("Input: ");
 			input = scan.nextInt();
 		}
 		if (input == 1)
@@ -170,10 +177,12 @@ public class OptionSelector {
 
 		// =======Ask for how many tickets========
 		System.out.println("Enter the Number of Tickets You Want to Purchase:");
+		System.out.print("Input: ");
 		input = scan.nextInt();
 
 		while (input < 1 || input > 999) {
 			System.out.println("Please Enter a Valid Number:");
+			System.out.print("Input: ");
 			input = scan.nextInt();
 		}
 
@@ -181,10 +190,12 @@ public class OptionSelector {
 
 		// ============confirmation of purchase=======
 		System.out.println("Enter 1 to Confirm Your Purchase, 0 to Return:");
+		System.out.print("Input: ");
 		input = scan.nextInt();
 
 		while (input < 0 || input > 1) {
 			System.out.println("Please Enter a Valid Number:");
+			System.out.print("Input: ");
 			input = scan.nextInt();
 		}
 
@@ -205,10 +216,12 @@ public class OptionSelector {
 		ArrayList<Integer> eList = showAllEvents();
 		rowCount = eList.size();
 		System.out.println("0: Return.");
+		System.out.print("Input: ");
 		input = scan.nextInt();
 
 		while (input < 0 || input > rowCount) { // incorrect input
 			System.out.println("Please Enter a Valid Number:");
+			System.out.print("Input: ");
 			input = scan.nextInt();
 		}
 
@@ -224,10 +237,12 @@ public class OptionSelector {
 		ArrayList<String> fList = showAllFood(eventID);
 		rowCount = fList.size();
 		System.out.println("0: Return.");
+		System.out.print("Input: ");
 		input = scan.nextInt();
 
 		while (input < 0 || input > rowCount) { // incorrect input
 			System.out.println("Please Enter a Valid Number:");
+			System.out.print("Input: ");
 			input = scan.nextInt();
 		}
 
@@ -240,10 +255,12 @@ public class OptionSelector {
 
 		// =======Ask for how many items========
 		System.out.println("Enter the Number of the Food Items You Want to Purchase:");
+		System.out.print("Input: ");
 		input = scan.nextInt();
 
 		while (input < 1 || input > 99) {
 			System.out.println("Please Enter a Valid Number:");
+			System.out.print("Input: ");
 			input = scan.nextInt();
 		}
 
@@ -251,10 +268,12 @@ public class OptionSelector {
 
 		// ============confirmation of purchase=======
 		System.out.println("Enter 1 to Confirm Your Purchase, 0 to Return:");
+		System.out.print("Input: ");
 		input = scan.nextInt();
 
 		while (input < 0 || input > 1) {
 			System.out.println("Please Enter a Valid Number:");
+			System.out.print("Input: ");
 			input = scan.nextInt();
 		}
 
@@ -277,10 +296,12 @@ public class OptionSelector {
 		ArrayList<Integer> eList = showAllEvents();
 		rowCount = eList.size();
 		System.out.println("0: Return.");
+		System.out.print("Input: ");
 		input = scan.nextInt();
 
 		while (input < 0 || input > rowCount) { // incorrect input
 			System.out.println("Please Enter a Valid Number:");
+			System.out.print("Input: ");
 			input = scan.nextInt();
 		}
 
@@ -296,10 +317,12 @@ public class OptionSelector {
 		ArrayList<String> mList = showAllMerchandise(eventID);
 		rowCount = mList.size();
 		System.out.println("0: Return.");
+		System.out.print("Input: ");
 		input = scan.nextInt();
 
 		while (input < 0 || input > rowCount) { // incorrect input
 			System.out.println("Please Enter a Valid Number:");
+			System.out.print("Input: ");
 			input = scan.nextInt();
 		}
 
@@ -312,10 +335,12 @@ public class OptionSelector {
 
 		// =======Ask for how many items========
 		System.out.println("Enter the Number of the Merchandise Items You Want to Purchase:");
+		System.out.print("Input: ");
 		input = scan.nextInt();
 
 		while (input < 1 || input > 99) {
 			System.out.println("Please Enter a Valid Number:");
+			System.out.print("Input: ");
 			input = scan.nextInt();
 		}
 
@@ -323,14 +348,14 @@ public class OptionSelector {
 
 		// ============confirmation of purchase=======
 		System.out.println("Enter 1 to Confirm Your Purchase, 0 to Return:");
+		System.out.print("Input: ");
 		input = scan.nextInt();
 
 		while (input < 0 || input > 1) {
 			System.out.println("Please Enter a Valid Number:");
+			System.out.print("Input: ");
 			input = scan.nextInt();
 		}
-
-		System.out.println(numOfMerch + " " + eventID + " " + merchName + " " + newFanID);
 
 		// ===========fans buy merchandise==============
 		if (input == 1) {
@@ -343,9 +368,52 @@ public class OptionSelector {
 	// iterate through open parking spots in database and list them for customers to
 	// see
 	private void requestForParking() {
-		System.out.println("Which parking spot would you like to reserve?");
-		// TODO: Add ParkingSpot Query
+		boolean disabled = false;
+		int numOfParking = 0;
+		// ========type of parking============================
+		System.out.println("Enter 1 for Disabled Parking, 0 for Normal Parking:");
+		System.out.print("Input: ");
+		input = scan.nextInt();
 
+		while (input < 0 || input > 1) {
+			System.out.println("Please Enter a Valid Number:");
+			System.out.print("Input: ");
+			input = scan.nextInt();
+		}
+
+		if (input == 1)
+			disabled = true;
+
+		// =================number of parking space============
+		System.out.println("Enter the Number of Parking Space You Want to Reserve:");
+		System.out.print("Input: ");
+		input = scan.nextInt();
+
+		while (input < 1 || input > 10) {
+			System.out.println("Please Enter a Valid Number:");
+			System.out.print("Input: ");
+			input = scan.nextInt();
+		}
+
+		numOfParking = input;
+
+		// ============confirmation of booking=======
+		System.out.println("Enter 1 to Confirm Your Reservation, 0 to Return:");
+		System.out.print("Input: ");
+		input = scan.nextInt();
+
+		while (input < 0 || input > 1) {
+			System.out.println("Please Enter a Valid Number:");
+			System.out.print("Input: ");
+			input = scan.nextInt();
+		}
+
+		// =================fans book parking=========
+		if (input == 1) {
+			fansParking(newFanID, disabled, numOfParking);
+		} else {
+			return;
+		}
 	}
 
 	// 222
@@ -354,6 +422,7 @@ public class OptionSelector {
 	private void manager() {
 
 		boolean repeat = true;
+		System.out.print("Input: ");
 		input = scan.nextInt();
 
 		while (repeat) {
@@ -391,6 +460,7 @@ public class OptionSelector {
 
 	private void createItem() {
 		boolean repeat = true;
+		System.out.print("Input: ");
 		input = scan.nextInt();
 		while (repeat) {
 			System.out.println("Create item selected.\n" + "What type of item would you like to create?\n"
@@ -432,6 +502,7 @@ public class OptionSelector {
 
 	private void deleteItem() {
 		boolean repeat = true;
+		System.out.print("Input: ");
 		input = scan.nextInt();
 		while (repeat) {
 			System.out.println("Delete item selected.\n" + "What type of item would you like to delete?\n"

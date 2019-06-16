@@ -176,37 +176,4 @@ public class StadiumSystem implements ActionListener {
 		// Eventually we will have to check whether login is successful or not.
 
 	}
-
-	// private void testing() {
-	// // create fan id
-	// int newFanID = createAFan();
-	// System.out.println("createAFan Testing: " + newFanID + "\n");
-	//
-	// // show all events
-	// System.out.println("showAllEvents Testing:");
-	// showAllEvents();
-	// System.out.println("\n");
-	//
-	// // fans buy tickets
-	// fansBuyTickets(2, 100, false, newFanID);
-	//
-	// // show all food selling in that event
-	// System.out.println("showAllFood Testing:");
-	// showAllFood(100);
-	// System.out.println("\n");
-	//
-	// // fans buy food
-	// fansBuyFood(3, 100, "Hotdog", newFanID);
-	//
-	// // show all Merchandise
-	// System.out.println("showAllMerchandise Testing:");
-	// showAllMerchandise(100);
-	// System.out.println("\n");
-	//
-	// // fans buy merchandise
-	// fansBuyMerchandise(2, 100, "Wallet", newFanID);
-	//
-	// // fans parking
-	// fansParking(newFanID, false, 1);
-	// }
 }
