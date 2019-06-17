@@ -8,6 +8,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+//added by Joao
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 public class OptionSelector {
 	// CTRL + F INDEX:
 	// !!!: constructor
@@ -26,6 +30,10 @@ public class OptionSelector {
 	private int eventID;
 	private String foodName;
 	private String merchName;
+	
+	//added by Joao
+	private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+	
 
 	public OptionSelector(Connection conn) {
 		this.con = conn;
@@ -103,8 +111,8 @@ public class OptionSelector {
 		boolean repeat = true;
 
 		while (repeat) {
-			System.out
-					.println("What would you like to do today?\n" + "1. Purchase event tickets\n" + "2. Purchase food\n"
+			System.out.println("");
+			System.out.println("What would you like to do today?\n" + "1. Purchase event tickets\n" + "2. Purchase food\n"
 							+ "3. Purchase merchandise\n" + "4. Request for parking\n" + "5. Go Back to Menu");
 			System.out.print("Input: ");
 			input = scan.nextInt();
@@ -199,6 +207,7 @@ public class OptionSelector {
 		// ===========fans buy tickets==============
 		if (input == 1) {
 			fansBuyTickets(numOfTickets, eventID, vip, newFanID);
+			System.out.println("Your Purchase has been Confirmed. Thank you.");
 		} else {
 			return;
 		}
@@ -279,6 +288,7 @@ public class OptionSelector {
 		// ===========fans buy tickets==============
 		if (input == 1) {
 			fansBuyFood(numOfFood, eventID, foodName, newFanID);
+			System.out.println("Your Purchase has been Confirmed. Thank you.");
 		} else {
 			return;
 		}
@@ -357,6 +367,7 @@ public class OptionSelector {
 		// ===========fans buy merchandise==============
 		if (input == 1) {
 			fansBuyMerchandise(numOfMerch, eventID, merchName, newFanID);
+			System.out.println("Your Purchase has been Confirmed. Thank you.");
 		} else {
 			return;
 		}
@@ -408,6 +419,7 @@ public class OptionSelector {
 		// =================fans book parking=========
 		if (input == 1) {
 			fansParking(newFanID, disabled, numOfParking);
+			System.out.println("Your Reservation has been Confirmed. Thank you.");
 		} else {
 			return;
 		}
@@ -419,13 +431,16 @@ public class OptionSelector {
 	private void manager() {
 
 		boolean repeat = true;
+		
+		System.out.println("");
+		System.out.println("What would you like to do today?\n"
+					+ "1. Create new Event/Food/Merchandise\n" + "2. Delete Event/Food/Merchandise\n"
+					+ "3. Employee assignment\n" + "4. Manage sponsorship\n" + "5. Look bookkeeping records\n");
 		System.out.print("Input: ");
 		input = scan.nextInt();
 
 		while (repeat) {
-			System.out.println("Manager selected.\n" + "What would you like to do today?\n"
-					+ "1. Create new Event/Food/Merchandise\n" + "2. Delete Event/Food/Merchandise\n"
-					+ "3. Employee assignment\n" + "4. Manage sponsorship\n" + "5. Look bookkeeping records");
+			
 
 			switch (input) {
 			case 1:
@@ -457,11 +472,12 @@ public class OptionSelector {
 
 	private void createItem() {
 		boolean repeat = true;
+		System.out.println("Create item selected.\n" + "What type of item would you like to create?\n"
+					+ "1. Event\n" + "2. Food\n" + "3. Merchandise\n");
 		System.out.print("Input: ");
 		input = scan.nextInt();
 		while (repeat) {
-			System.out.println("Create item selected.\n" + "What type of item would you like to create?\n"
-					+ "1. Event\n" + "2. Food\n" + "3. Merchandise\n");
+			
 
 			switch (input) {
 			case 1:
@@ -488,6 +504,7 @@ public class OptionSelector {
 
 
             int EventID;
+			String EventName;
             Time StartTime;
             Time endTime;
             int TicketSold;
@@ -495,20 +512,24 @@ public class OptionSelector {
             PreparedStatement ps;
 
             try{
-                ps = con.prepareStatement("INSERT INTO Stadium_Event VALUES (?,?,?,?,?)");
+                ps = con.prepareStatement("INSERT INTO Stadium_Events VALUES (?,?,?,?,?,?)");
 
                 System.out.print("\nEvent ID: ");
                 EventID = Integer.parseInt(in.readLine());
                 ps.setInt(1, EventID);
+				
+				System.out.print("\nEvent Name: ");
+                EventName = in.readLine();
+                ps.setString(2, EventName);
 
                 System.out.print("\nStart Time: ");
                 java.util.Date parseStartTime;
-                SimpleDateFormat formatStart = new SimpleDateFormat("HH:mm:ss");
+                SimpleDateFormat formatStart = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                 try{
                     parseStartTime = formatStart.parse(in.readLine());
                     StartTime = new Time(parseStartTime.getTime());
-                    ps.setTime(2, StartTime);
+                    ps.setTime(3, StartTime);
 
                 } catch (ParseException e) {
                     System.out.println("Invalid Start Time");
@@ -516,12 +537,12 @@ public class OptionSelector {
 
                 System.out.print("\nEnd Time: ");
                 java.util.Date parseEndTime;
-                SimpleDateFormat formatEnd = new SimpleDateFormat("HH:mm:ss");
+                SimpleDateFormat formatEnd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                 try{
                     parseEndTime = formatStart.parse(in.readLine());
                     endTime = new Time(parseEndTime.getTime());
-                    ps.setTime(3, endTime);
+                    ps.setTime(4, endTime);
 
                 } catch (ParseException e) {
                     System.out.println("Invalid End Time");
@@ -529,7 +550,7 @@ public class OptionSelector {
 
                 System.out.print("\nTickets Sold: ");
                 TicketSold = Integer.parseInt(in.readLine());
-                ps.setInt(4, TicketSold);
+                ps.setInt(5, TicketSold);
 
                 System.out.print("\nEvent Date: ");
                 java.util.Date parseDate;
@@ -539,7 +560,7 @@ public class OptionSelector {
                     parseDate = formatDate.parse(in.readLine());
                     // might be parseDate.getDate()
                     EventDate = new Date(parseDate.getTime());
-                    ps.setDate(5, EventDate);
+                    ps.setDate(6, EventDate);
 
                 } catch (ParseException e) {
                     System.out.println("Invalid Event Date");
@@ -653,11 +674,12 @@ public class OptionSelector {
 
 	private void deleteItem() {
 		boolean repeat = true;
+		System.out.println("Delete item selected.\n" + "What type of item would you like to delete?\n"
+					+ "1. Event\n" + "2. Food\n" + "3. Merchandise\n");
 		System.out.print("Input: ");
 		input = scan.nextInt();
 		while (repeat) {
-			System.out.println("Delete item selected.\n" + "What type of item would you like to delete?\n"
-					+ "1. Event\n" + "2. Food\n" + "3. Merchandise\n");
+			
 
 			switch (input) {
 			case 1:
@@ -730,15 +752,18 @@ public class OptionSelector {
             foodName = in.readLine();
             ps.setString(1, foodName);
 
-            int rowCount = ps.executeUpdate();
+            int rowCount = ps.executeUpdate("DELETE FROM Food1 WHERE FoodName = " + foodName);
 
             if(rowCount == 0){
-                System.out.println("\n Food " + foodName + "doesn't exist");
+                System.out.println("\n Food " + foodName + " doesn't exist");
             }
 
             con.commit();
 
             ps.close();
+			if(rowCount > 0){
+				System.out.println("\n Delete complete");
+			}
 
         } catch (SQLException e) {
             System.out.println("Message: " + e.getMessage());
@@ -764,19 +789,23 @@ public class OptionSelector {
 
         try{
             ps = con.prepareStatement("DELETE FROM Merchandise1 WHERE MName = ?");
-            System.out.print("\nFood Name: ");
+            System.out.print("\nMerchandise Name: ");
             merchName = in.readLine();
             ps.setString(1, merchName);
 
-            int rowCount = ps.executeUpdate();
+            int rowCount = ps.executeUpdate("DELETE FROM Merchandise1 WHERE MName = " + merchName);
 
             if(rowCount == 0){
-                System.out.println("\n Merchandise " + merchName + "doesn't exist");
+                System.out.println("\n Merchandise " + merchName + " doesn't exist");
             }
 
             con.commit();
 
             ps.close();
+			
+			if(rowCount > 0){
+				System.out.println("\n Delete complete");
+			}
 
         } catch (SQLException e) {
             System.out.println("Message: " + e.getMessage());
@@ -1056,18 +1085,29 @@ public class OptionSelector {
 			if (rs.next())
 				fanID = rs.getInt(1);
 		} catch (SQLException ex) {
-			System.out.println("Message: " + ex.getMessage());
+			System.out.println("All events are fulled. We apologize for any inconvenience caused.");
+			System.out.println("Thank you for using StadiumSystem!");
+			System.exit(0);
 		}
 
+		System.out.println("Please keep a record of your ID: " + fanID);
 		return fanID;
 	}
 
 	// 2. Show all events:
 	// Stadium_Events(Event_id, StartTime, EndTime, TicketSold, Edate)
+	// Concerts(Event_id, Performer, Capacity)
+	// Games(Event_id, HomeTeam, AwayTeam)
+	// Team(HomeTeam, sportsType)
+	
 	private ArrayList<Integer> showAllEvents() {
 		int eid = 0;
 		String ename = null;
 		int countCMLRow = 1;
+		String perf = null;
+		String sports = null;
+		String ht = null;
+		String at = null;
 
 		ArrayList<Integer> EN = new ArrayList<Integer>();
 
@@ -1087,27 +1127,53 @@ public class OptionSelector {
 
 		try {
 			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM Stadium_Events WHERE Edate >= SYSDATE ORDER BY Edate");
-			// get eventID
+			
+			// showing concerts
+			
+			ResultSet rs = stmt.executeQuery("SELECT * FROM Stadium_Events JOIN Concerts USING (Event_id) WHERE Edate >= SYSDATE ORDER BY Edate");
 
+			System.out.println("Concerts:");
 			while (rs.next()) {
 				// grab data
 				eid = rs.getInt("Event_id");
-
 				EN.add(eid);
-
+				
+		
 				ename = rs.getString("EventName");
 				sqlTS1 = rs.getTimestamp("StartTime");
 				utilTS1.setTime(sqlTS1.getTime());
 				sqlTS2 = rs.getTimestamp("EndTime");
 				utilTS2.setTime(sqlTS2.getTime());
+				perf = rs.getString("Performer");
 
-				System.out.println(countCMLRow + ". ID:" + eid + "   Name:" + ename.trim() + "   From:"
-						+ tm.format(utilTS1) + "   To:" + tm.format(utilTS2));
+				System.out.println(countCMLRow + ". ID: " + eid + "   Name: " + ename.trim() + "   From: "
+						+ tm.format(utilTS1) + "   To: " + tm.format(utilTS2) + "   Performer: " + perf.trim());
 				countCMLRow++;
-				// sqlDate = rs.getDate("Edate");
-				// utilDate.setTime(sqlDate.getTime());
-				// System.out.println(" " + fm.format(utilDate));
+			}
+			
+			
+			// showing games
+			
+			rs = stmt.executeQuery("SELECT * FROM (SELECT * FROM Games JOIN Stadium_Events USING (Event_id)) JOIN Team USING (HomeTeam) WHERE Edate >= SYSDATE ORDER BY Edate");
+
+			System.out.println("Games:");
+			while (rs.next()) {
+				// grab data
+				eid = rs.getInt("Event_id");
+				EN.add(eid);
+				
+				ht = rs.getString("HomeTeam");
+				at  = rs.getString("AwayTeam");
+				ename = rs.getString("EventName");
+				sqlTS1 = rs.getTimestamp("StartTime");
+				utilTS1.setTime(sqlTS1.getTime());
+				sqlTS2 = rs.getTimestamp("EndTime");
+				utilTS2.setTime(sqlTS2.getTime());
+				sports = rs.getString("sportsType");
+
+				System.out.println(countCMLRow + ". ID: " + eid + "   Name: " + ename.trim() + "   From: "
+						+ tm.format(utilTS1) + "   To: " + tm.format(utilTS2) + "   Sports: " + sports.trim() + "   HomeTeam: " + ht.trim() + "   AwayTeam: " + at.trim());
+				countCMLRow++;
 			}
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
