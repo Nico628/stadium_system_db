@@ -113,7 +113,7 @@ public class OptionSelector {
 		while (repeat) {
 			System.out.println("");
 			System.out.println("What would you like to do today?\n" + "1. Purchase event tickets\n" + "2. Purchase food\n"
-							+ "3. Purchase merchandise\n" + "4. Request for parking\n" + "5. Go Back to Menu");
+							+ "3. Purchase merchandise\n" + "4. Request for parking\n" + "5. Return to Menu");
 			System.out.print("Input: ");
 			input = scan.nextInt();
 
@@ -435,7 +435,8 @@ public class OptionSelector {
 		System.out.println("");
 		System.out.println("What would you like to do today?\n"
 					+ "1. Create new Event/Food/Merchandise\n" + "2. Delete Event/Food/Merchandise\n"
-					+ "3. Employee assignment\n" + "4. Manage sponsorship\n" + "5. Look bookkeeping records\n");
+					+ "3. Employee assignment\n" + "4. Manage sponsorship\n" + "5. Look bookkeeping records\n"
+							+ "6. Return to Menu\n");
 		System.out.print("Input: ");
 		input = scan.nextInt();
 
@@ -444,25 +445,22 @@ public class OptionSelector {
 
 			switch (input) {
 			case 1:
-				repeat = false;
 				createItem();
 				break;
 			case 2:
-				repeat = false;
 				deleteItem();
 				break;
 			case 3:
-				repeat = false;
 				employeeAssginment();
 				break;
 			case 4:
-				repeat = false;
 				manageSponsorship();
 				break;
 			case 5:
-				repeat = false;
 				lookBookKeeping();
 				break;
+			case 6:
+				return;
 			default:
 				System.out.println("Please Enter a Valid Number:");
 			}
@@ -472,7 +470,7 @@ public class OptionSelector {
 
 	private void createItem() {
 		boolean repeat = true;
-		System.out.println("Create item selected.\n" + "What type of item would you like to create?\n"
+		System.out.println("What type of item would you like to create?\n"
 					+ "1. Event\n" + "2. Food\n" + "3. Merchandise\n");
 		System.out.print("Input: ");
 		input = scan.nextInt();
@@ -674,7 +672,7 @@ public class OptionSelector {
 
 	private void deleteItem() {
 		boolean repeat = true;
-		System.out.println("Delete item selected.\n" + "What type of item would you like to delete?\n"
+		System.out.println("What type of item would you like to delete?\n"
 					+ "1. Event\n" + "2. Food\n" + "3. Merchandise\n");
 		System.out.print("Input: ");
 		input = scan.nextInt();
