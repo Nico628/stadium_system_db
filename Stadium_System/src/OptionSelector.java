@@ -1222,6 +1222,25 @@ public class OptionSelector {
 				// might have to deal with normal seats fulled here************
 			}
 		}
+		
+		
+		// update ticketsSold in Stadium_Events
+		try {
+			ps = con.prepareStatement("UPDATE Stadium_Events SET TicketSold = TicketSold + ? WHERE Event_id = ?");
+			
+			ps.setInt(1, num);
+			ps.setInt(2, event_id);
+
+			ps.executeUpdate();
+
+			// commit work
+			con.commit();
+			
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+		
+		
 
 	}
 
