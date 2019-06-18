@@ -6,9 +6,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.sql.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class StadiumSystem implements ActionListener {
 	// command line reader
@@ -21,7 +21,7 @@ public class StadiumSystem implements ActionListener {
 	private JPasswordField passwordField;
 	private JFrame mainFrame;
 	private JFrame stadiumFrame;
-	private boolean logInSuccess = false;
+	//private boolean logInSuccess = false;
 
 	// Indexed some stuff for easy ctrl+f traversal
 	// !!!: Constructor
@@ -36,6 +36,7 @@ public class StadiumSystem implements ActionListener {
 		oracleLogin();
 
 		// Load & register the Oracle JDBC driver
+
 		try {
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 		} catch (SQLException ex) {
@@ -43,12 +44,14 @@ public class StadiumSystem implements ActionListener {
 			System.exit(-1);
 		}
 
+
 		// Don't delete pls
 		// alternate try/catch
-		/*
-		 * try { Class.forName("oracle.jdbc.driver.OracleDriver"); } catch (Exception e)
-		 * { System.out.println("Error"); }
-		 */
+        /*
+		  try { Class.forName("oracle.jdbc.driver.OracleDriver"); } catch (Exception e)
+		  { System.out.println("Error"); }
+		  */
+
 	}
 
 	// oracle login
@@ -147,8 +150,10 @@ public class StadiumSystem implements ActionListener {
 	// handler for login window
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		if (connection(usernameField.getText(), String.valueOf(passwordField.getPassword()))) {
+		// TODO GET RID OF THE USER/PW. FILLED IN FOR QUICKER TESTING.
+		if (connection
+                (usernameField.getText(), String.valueOf(passwordField.getPassword()))
+        ) {
 			// if the username and password are valid,
 			// remove the login window and display a text menu
 			mainFrame.dispose();

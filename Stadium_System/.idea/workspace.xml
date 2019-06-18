@@ -16,14 +16,14 @@
     <option name="MAKE_PROJECT_ON_SAVE" value="true" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.35665137">
+    <splitter split-orientation="horizontal" split-proportion="0.4646681">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/DatabaseConnector.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="238">
-                  <caret line="19" selection-start-line="19" selection-end-line="19" />
+                <state relative-caret-position="969">
+                  <caret line="62" column="52" lean-forward="true" selection-start-line="62" selection-start-column="52" selection-end-line="62" selection-end-column="52" />
                 </state>
               </provider>
             </entry>
@@ -31,10 +31,12 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/StadiumSystem.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state>
-                  <caret line="18" column="37" lean-forward="true" selection-start-line="18" selection-start-column="37" selection-end-line="18" selection-end-column="37" />
+                <state relative-caret-position="297">
+                  <caret line="151" column="48" lean-forward="true" selection-start-line="151" selection-start-column="48" selection-end-line="151" selection-end-column="48" />
                   <folding>
                     <element signature="imports" expanded="true" />
+                    <element signature="e#3452#3548#0" expanded="true" />
+                    <element signature="e#3547#3548#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -43,8 +45,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/OptionSelector.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="11060">
-                  <caret line="1316" lean-forward="true" selection-start-line="1316" selection-end-line="1316" />
+                <state relative-caret-position="681">
+                  <caret line="1256" lean-forward="true" selection-start-line="1256" selection-end-line="1256" />
                 </state>
               </provider>
             </entry>
@@ -56,8 +58,11 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/OptionSelector.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="374">
-                  <caret line="27" column="29" lean-forward="true" selection-start-line="27" selection-start-column="29" selection-end-line="27" selection-end-column="29" />
+                <state relative-caret-position="860">
+                  <caret line="1060" column="78" lean-forward="true" selection-start-line="1060" selection-start-column="78" selection-end-line="1060" selection-end-column="78" />
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -92,6 +97,12 @@
       <find>???</find>
       <find>222</find>
       <find>time</find>
+      <find>data</find>
+      <find>list</find>
+      <find>show</find>
+      <find>events</find>
+      <find>new</find>
+      <find>dataanalysis</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -99,8 +110,8 @@
       <list>
         <option value="$PROJECT_DIR$/src/DatabaseConnector.java" />
         <option value="$PROJECT_DIR$/src/Selector.java" />
-        <option value="$PROJECT_DIR$/src/StadiumSystem.java" />
         <option value="$PROJECT_DIR$/src/OptionSelector.java" />
+        <option value="$PROJECT_DIR$/src/StadiumSystem.java" />
       </list>
     </option>
   </component>
@@ -116,7 +127,6 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -133,6 +143,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -204,7 +215,7 @@
     <frame x="0" y="0" width="1920" height="1080" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.08113804" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.015806112" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -249,13 +260,7 @@
     </layout-to-restore>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/DatabaseConnector.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="19" selection-start-line="19" selection-end-line="19" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ManagerQueries.java" />
     <entry file="file://$PROJECT_DIR$/.classpath">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
@@ -263,27 +268,32 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ManagerQueries.java">
+    <entry file="file://$PROJECT_DIR$/src/DatabaseConnector.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8806">
-          <caret line="518" lean-forward="true" selection-start-line="518" selection-end-line="518" />
+        <state relative-caret-position="969">
+          <caret line="62" column="52" lean-forward="true" selection-start-line="62" selection-start-column="52" selection-end-line="62" selection-end-column="52" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/StadiumSystem.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="18" column="37" lean-forward="true" selection-start-line="18" selection-start-column="37" selection-end-line="18" selection-end-column="37" />
+        <state relative-caret-position="297">
+          <caret line="151" column="48" lean-forward="true" selection-start-line="151" selection-start-column="48" selection-end-line="151" selection-end-column="48" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#3452#3548#0" expanded="true" />
+            <element signature="e#3547#3548#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/OptionSelector.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="27" column="29" lean-forward="true" selection-start-line="27" selection-start-column="29" selection-end-line="27" selection-end-column="29" />
+        <state relative-caret-position="860">
+          <caret line="1060" column="78" lean-forward="true" selection-start-line="1060" selection-start-column="78" selection-end-line="1060" selection-end-column="78" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

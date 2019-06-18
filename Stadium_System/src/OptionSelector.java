@@ -1,16 +1,16 @@
 
 //User Interface
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.sql.Date;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 //added by Joao
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
 public class OptionSelector {
 	// CTRL + F INDEX:
@@ -436,7 +436,7 @@ public class OptionSelector {
 		System.out.println("What would you like to do today?\n"
 					+ "1. Create new Event/Food/Merchandise\n" + "2. Delete Event/Food/Merchandise\n"
 					+ "3. Employee assignment\n" + "4. Manage sponsorship\n" + "5. Look bookkeeping records\n"
-							+ "6. Return to Menu\n");
+					+ "6. Data Analysis\n"	+ "7. Return to Menu\n");
 		System.out.print("Input: ");
 		input = scan.nextInt();
 
@@ -459,8 +459,11 @@ public class OptionSelector {
 			case 5:
 				lookBookKeeping();
 				break;
-			case 6:
-				return;
+            case 6:
+                dataAnalysis();
+                break;
+            case 7:
+                return;
 			default:
 				System.out.println("Please Enter a Valid Number:");
 			}
@@ -977,11 +980,132 @@ public class OptionSelector {
         }
 	}
 
-	// return list of bookkeepings
+	//TODO: Add other options you need
+	private void dataAnalysis(){
+	    boolean repeat = true;
+
+
+
+
+	    while (repeat){
+
+            System.out.println("\nWhich data would you like to see?\n"
+                    + "1. See fans that participate in every event\n" + "2. Return to previous menu\n");
+
+            System.out.print("Input: ");
+
+            input = scan.nextInt();
+
+	        switch(input){
+                case 1:
+                    fanEveryEvent();
+                    break;
+                case 2:
+                    return;
+                default:
+                    System.out.println("Please Enter a Valid Number:");
+	        }
+	    }
+	}
+
+
+
+    private void fanEveryEvent() {
+
+	    //all the fans that have purchased the ticket
+	    Set<Integer> fans = new HashSet<>();
+
+	    //pair all fans and the events they have bought tickets to
+        Map<Integer, Set<Integer>> fanAndEventNum = new HashMap<>();
+
+        //tells us total number of UNIQUE events
+        int numUniqueEvents = 0;
+
+        try{
+            Statement s = con.createStatement();
+            ResultSet sr = s.executeQuery("SELECT * FROM Stadium_Events");
+
+            while(sr.next()){
+                numUniqueEvents++;
+            }
+
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }
+
+        //list of fans who have been to every event.
+        List<Integer> trueFan = new ArrayList<>();
+
+
+        try{
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT Event_id, Fan_ID FROM Tickets");
+
+            while(rs.next()){
+                fans.add(rs.getInt("Fan_ID"));
+            }
+
+            while(rs.next()){
+                int currentFanID = rs.getInt("Fan_ID");
+                int currentEID = rs.getInt("Event_id");
+                if(fanAndEventNum.get(currentFanID) == null){
+                    Set<Integer> tempEID = new HashSet<>();
+                    tempEID.add(currentEID);
+                    fanAndEventNum.put(currentFanID, tempEID);
+                }
+                else{
+                    Set<Integer> tempset = fanAndEventNum.get(currentFanID);
+                    tempset.add(currentEID);
+                    fanAndEventNum.put(currentFanID, tempset);
+                }
+                if(fanAndEventNum.get(currentFanID).size() == numUniqueEvents)
+                    trueFan.add(currentFanID);
+            }
+
+            int Fan_ID;
+            String Phone_no;
+            String Fname;
+            String CreditCardInfo;
+            int currentRow = 1;
+
+
+            try{
+                Statement st = con.createStatement();
+                ResultSet r = st.executeQuery("SELECT * FROM Fans");
+
+                while(r.next()){
+                    Fan_ID = r.getInt("Fan_ID");
+                    if(trueFan.contains(Fan_ID)){
+
+                        Phone_no = r.getString("Phone_no");
+                        Fname = r.getString("Fname");
+                        CreditCardInfo = r.getString("CreditCardInfo");
+
+                        System.out.println(currentRow + ". Fan ID: " + Fan_ID + " Phone Number: " + Phone_no
+                              + " Full Name: " + Fname + " Credit Card Info : " + CreditCardInfo);
+
+                        currentRow++;
+                    }
+                }
+
+            }catch (SQLException ex) {
+                System.out.println("Message: " + ex.getMessage());
+            }
+
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }
+
+    }
+
+
+
+	//TODO: NEEDED?
 	private void listBookKeeping() {
 
 	}
 
+	//TODO: NEEDED?
     private void createEmployee(){
         int employeeID;
         String employeeName;
@@ -1029,6 +1153,7 @@ public class OptionSelector {
         }
     }
 
+    //TODO: NEEDED?
     private void deleteEmployee(){
         int employeeID;
         PreparedStatement ps;
@@ -1083,7 +1208,7 @@ public class OptionSelector {
 			if (rs.next())
 				fanID = rs.getInt(1);
 		} catch (SQLException ex) {
-			System.out.println("All events are fulled. We apologize for any inconvenience caused.");
+			System.out.println("All events are full. We apologize for any inconvenience caused.");
 			System.out.println("Thank you for using StadiumSystem!");
 			System.exit(0);
 		}
