@@ -1186,6 +1186,17 @@ public class OptionSelector {
 
 	private void fansBuyTickets(int num, int event_id, Boolean VIP, int fanID) {
 		PreparedStatement ps = null;
+		int income = 0;
+		java.util.Date utilDate = null;
+		String stringDate = new String("01-07-19");
+		SimpleDateFormat fm = new SimpleDateFormat("dd-MM-yy");
+		try {
+			utilDate = fm.parse(stringDate);
+		} catch (ParseException pe){
+			return;
+		}
+		
+		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 
 		if (VIP) { // vip tickets
 			try {
@@ -1200,6 +1211,7 @@ public class OptionSelector {
 					// commit work
 					con.commit();
 				}
+				income = 100*num;
 			} catch (SQLException ex) {
 				System.out.println("Message: " + ex.getMessage());
 				// might have to deal with vip seats fulled here************
@@ -1217,6 +1229,7 @@ public class OptionSelector {
 					// commit work
 					con.commit();
 				}
+				income = 50*num;
 			} catch (SQLException ex) {
 				System.out.println("Message: " + ex.getMessage());
 				// might have to deal with normal seats fulled here************
@@ -1224,8 +1237,9 @@ public class OptionSelector {
 		}
 		
 		
-		// update ticketsSold in Stadium_Events
+		
 		try {
+			// update ticketsSold in Stadium_Events
 			ps = con.prepareStatement("UPDATE Stadium_Events SET TicketSold = TicketSold + ? WHERE Event_id = ?");
 			
 			ps.setInt(1, num);
@@ -1235,6 +1249,32 @@ public class OptionSelector {
 
 			// commit work
 			con.commit();
+			
+			// get the date of the event
+			ps = con.prepareStatement("SELECT Edate FROM Stadium_Events WHERE Event_id = ?");
+			
+			ps.setInt(1, event_id);
+			
+			ResultSet rs = ps.executeQuery();
+			
+			if(rs.next())
+				sqlDate = rs.getDate(1);
+			utilDate.setTime(sqlDate.getTime());
+			System.out.println(fm.format(utilDate));
+			
+			
+			// update the Income in bookkeeping of that specific date
+			ps = con.prepareStatement("UPDATE BookKeeping1 SET Income = Income + ? WHERE Edate = ?");
+			
+			ps.setInt(1, income);
+			ps.setDate(2, sqlDate);
+			
+			ps.executeUpdate();
+
+			// commit work
+			con.commit();
+			
+			
 			
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
