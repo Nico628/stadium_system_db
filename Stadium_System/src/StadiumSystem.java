@@ -36,12 +36,12 @@ public class StadiumSystem implements ActionListener {
 		oracleLogin();
 
 		// Load & register the Oracle JDBC driver
-		try {
-			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
-		} catch (SQLException ex) {
-			System.out.println("Message: " + ex.getMessage());
-			System.exit(-1);
-		}
+//		try {
+//			DriverManager.registerDriver(new com.mysql.cj.build.jdk);
+//		} catch (SQLException ex) {
+//			System.out.println("Message: " + ex.getMessage());
+//			System.exit(-1);
+//		}
 
 		// Don't delete pls
 		// alternate try/catch
@@ -133,13 +133,22 @@ public class StadiumSystem implements ActionListener {
 
 	// Connect to database
 	private boolean connection(String username, String password) {
-		String connectURL = "jdbc:oracle:thin:@dbhost.students.cs.ubc.ca:1522:stu";
+		String connectURL = "jdbc:mysql://localhost:3306/db?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+		
+		try {
+		    Class.forName("com.mysql.cj.jdbc.Driver");
+		} 
+		catch (ClassNotFoundException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		} 
+		
 		try {
 			con = DriverManager.getConnection(connectURL, username, password);
-			System.out.println("\nConnected to Oracle!");
+			System.out.println("\nConnected to mySQL!");
 			return true;
 		} catch (SQLException ex) {
-			System.out.println("Message: " + ex.getMessage());
+			ex.printStackTrace();
 			return false;
 		}
 	}
@@ -170,10 +179,6 @@ public class StadiumSystem implements ActionListener {
 	// ???
 	public static void main(String args[]) {
 		StadiumSystem ss = new StadiumSystem();
-
-		// currently displays UI whether login is successful or not
-		// I have added a new variable logInSuccess at top.
-		// Eventually we will have to check whether login is successful or not.
 
 	}
 }

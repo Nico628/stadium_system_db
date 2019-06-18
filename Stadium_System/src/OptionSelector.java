@@ -1309,6 +1309,7 @@ public class OptionSelector {
 				fname = rs.getString("FoodName");
 				fn.add(fname);
 				sellingPrice = rs.getInt("SellingPrice");
+			
 				System.out.println(rowCount + ". " + fname + "  $" + sellingPrice);
 				rowCount++;
 			}
