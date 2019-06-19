@@ -147,7 +147,6 @@ public class StadiumSystem implements ActionListener {
 		
 		try {
 			con = DriverManager.getConnection(connectURL, username, password);
-			System.out.println("\nConnected to mySQL!");
 			return true;
 		} catch (SQLException ex) {
 			ex.printStackTrace();
