@@ -429,14 +429,13 @@ public class OptionSelector {
 
 		boolean repeat = true;
 
-		System.out.println("");
-		System.out.println("What would you like to do today?\n" + "1. Create new Event/Food/Merchandise\n"
-				+ "2. Delete Event/Food/Merchandise\n" + "3. Employee assignment\n" + "4. Manage sponsorship\n"
-				+ "5. Look bookkeeping records\n" + "6. Data Analysis\n" + "7. Return to Menu\n");
-		System.out.print("Input: ");
-		input = scan.nextInt();
-
 		while (repeat) {
+			System.out.println("");
+			System.out.println("What would you like to do today?\n" + "1. Create new Event/Food/Merchandise\n"
+					+ "2. Delete Event/Food/Merchandise\n" + "3. Employee assignment\n" + "4. Manage sponsorship\n"
+					+ "5. Look bookkeeping records\n" + "6. Data Analysis\n" + "7. Return to Menu\n");
+			System.out.print("Input: ");
+			input = scan.nextInt();
 
 			switch (input) {
 			case 1:
@@ -960,8 +959,9 @@ public class OptionSelector {
 
 		while (repeat) {
 
-			System.out.println("\nWhich data would you like to see?\n" + "1. See fans that participate in every event\n"
-					+ "2. Return to previous menu\n");
+			System.out.println("\nWhich data would you like to see?\n"
+					+ "1. See fans that participate in every event.\n" + "2. Find the Date with max income.\n"
+					+ "3. Find average number of tickets sold per day.\n" + "4. Return to menu.\n");
 
 			System.out.print("Input: ");
 
@@ -971,7 +971,10 @@ public class OptionSelector {
 			case 1:
 				fanEveryEvent();
 				break;
-			case 2:
+			case 3:
+				nestedAggregation();
+				break;
+			case 4:
 				return;
 			default:
 				System.out.println("\nPlease Enter a Valid Number:\n");
@@ -1797,6 +1800,54 @@ public class OptionSelector {
 			return true;
 		} catch (SQLException ex) {
 			return false;
+		}
+	}
+
+	// 10: nestedAggregation
+	// find the average number of times sold per day
+	private void nestedAggregation() {
+		int input = 0;
+		PreparedStatement ps;
+		double avg = 0.0;
+
+		java.util.Date utilDate = null;
+		String stringDate = new String("01-07-19");
+		SimpleDateFormat fm = new SimpleDateFormat("dd-MM-yy");
+		try {
+			utilDate = fm.parse(stringDate);
+		} catch (ParseException pe) {
+			return;
+		}
+
+		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+
+		try {
+			ps = con.prepareStatement(
+					"SELECT EDate, AVG(TicketSold) FROM Stadium_Events GROUP BY EDate ORDER BY EDate");
+			ResultSet rs = ps.executeQuery();
+
+			System.out.println("");
+
+			while (rs.next()) {
+				sqlDate = rs.getDate(1);
+				utilDate.setTime(sqlDate.getTime());
+
+				avg = rs.getDouble(2);
+
+				System.out.println(fm.format(utilDate) + "   Average Tickets Sold: " + avg);
+			}
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+		
+		System.out.println("\n0: Return.");
+		System.out.print("Input: ");
+		input = scan.nextInt();
+
+		while (input != 0) {
+			System.out.println("\n0: Return.");
+			System.out.print("Input: ");
+			input = scan.nextInt();
 		}
 	}
 
