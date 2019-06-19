@@ -431,9 +431,9 @@ public class OptionSelector {
 
 		while (repeat) {
 			System.out.println("");
-			System.out.println("What would you like to do today?\n" + "1. Create new Event/Food/Merchandise\n"
-					+ "2. Delete Event/Food/Merchandise\n" + "3. Employee assignment\n" + "4. Manage sponsorship\n"
-					+ "5. Look bookkeeping records\n" + "6. Data Analysis\n" + "7. Return to Menu\n");
+			System.out.println("What would you like to do today?\n" + "1. Create new Event/Food/Merchandise/Employee/Sponsorship/BookKeeping\n" + "2. Delete Event/Food/Merchandise/Employee/Sponsorship\n" 
+					+ "3. View Event/Food/Merchandise/Employee/Sponsorship\n" + "4. Employee assignment\n" + 
+					"5. Look at analytics\n" + "6. Look bookkeeping records\n" + "7. Manage Sponsorship\n" + "8. Return.\n");
 			System.out.print("Input: ");
 			input = scan.nextInt();
 
@@ -445,18 +445,21 @@ public class OptionSelector {
 				deleteItem();
 				break;
 			case 3:
-				employeeAssginment();
+				viewItem();
 				break;
 			case 4:
-				manageSponsorship();
+				employeeAssginment();
 				break;
 			case 5:
-				lookBookKeeping();
+				analyticsMenu();
 				break;
 			case 6:
-				dataAnalysis();
+				lookBookKeeping();
 				break;
 			case 7:
+				manageSponsorship();
+				break;
+			case 8:
 				return;
 			default:
 				System.out.println("\nPlease Enter a Valid Number:\n");
@@ -467,8 +470,8 @@ public class OptionSelector {
 
 	private void createItem() {
 		boolean repeat = true;
-		System.out.println(
-				"What type of item would you like to create?\n" + "1. Event\n" + "2. Food\n" + "3. Merchandise\n");
+		System.out.println("Create item selected.\n" + "What type of item would you like to create?\n" + "1. Event\n"
+				+ "2. Food\n" + "3. Merchandise\n" + "4. Employee\n" + "5. Sponsorship\n" + "6. Bookkeeping");
 		System.out.print("Input: ");
 		input = scan.nextInt();
 		while (repeat) {
@@ -486,8 +489,20 @@ public class OptionSelector {
 				repeat = false;
 				createMerchandise();
 				break;
+			case 4:
+				repeat = false;
+				createEmployee();
+				break;
+			case 5:
+				repeat = false;
+				createSponsorship();
+				break;
+			case 6:
+				repeat = false;
+				createBookkeeping();
+				break;
 			default:
-				System.out.println("\nPlease Enter a Valid Number:\n");
+				System.out.println("Please Enter a Valid Number:");
 			}
 		}
 	}
@@ -498,8 +513,8 @@ public class OptionSelector {
 
 		int EventID;
 		String EventName;
-		Time StartTime;
-		Time endTime;
+		Date StartTime;
+		Date endTime;
 		int TicketSold;
 		Date EventDate;
 		PreparedStatement ps;
@@ -521,8 +536,8 @@ public class OptionSelector {
 
 			try {
 				parseStartTime = formatStart.parse(in.readLine());
-				StartTime = new Time(parseStartTime.getTime());
-				ps.setTime(3, StartTime);
+				StartTime = new Date(parseStartTime.getTime());
+				ps.setDate(3, StartTime);
 
 			} catch (ParseException e) {
 				System.out.println("Invalid Start Time");
@@ -534,8 +549,8 @@ public class OptionSelector {
 
 			try {
 				parseEndTime = formatStart.parse(in.readLine());
-				endTime = new Time(parseEndTime.getTime());
-				ps.setTime(4, endTime);
+				endTime = new Date(parseEndTime.getTime());
+				ps.setDate(4, endTime);
 
 			} catch (ParseException e) {
 				System.out.println("Invalid End Time");
@@ -581,7 +596,7 @@ public class OptionSelector {
 	// add new Food to database
 	private void createFood() {
 		String foodName;
-		boolean availability;
+		int availability;
 		int makingCost;
 		PreparedStatement ps;
 
@@ -593,8 +608,8 @@ public class OptionSelector {
 			ps.setString(1, foodName);
 
 			System.out.print("\nAvailability: ");
-			availability = Boolean.parseBoolean(in.readLine());
-			ps.setBoolean(2, availability);
+			availability = Integer.parseInt(in.readLine());
+			ps.setInt(2, availability);
 
 			System.out.print("\nMaking Cost: ");
 			makingCost = Integer.parseInt(in.readLine());
@@ -622,7 +637,7 @@ public class OptionSelector {
 	// add new Merchandise to database
 	private void createMerchandise() {
 		String merchandiseName;
-		boolean availability;
+		int availability;
 		int makingCost;
 		PreparedStatement ps;
 
@@ -634,8 +649,8 @@ public class OptionSelector {
 			ps.setString(1, merchandiseName);
 
 			System.out.print("\nAvailability: ");
-			availability = Boolean.parseBoolean(in.readLine());
-			ps.setBoolean(2, availability);
+			availability = Integer.parseInt(in.readLine());
+			ps.setInt(2, availability);
 
 			System.out.print("\nMaking Cost: ");
 			makingCost = Integer.parseInt(in.readLine());
@@ -660,10 +675,107 @@ public class OptionSelector {
 		}
 	}
 
+	// create a new sponsorship
+
+	private void createSponsorship() {
+		String companyName;
+		float donation;
+		PreparedStatement ps;
+
+		try {
+			ps = con.prepareStatement("INSERT INTO Sponsorship1 VALUES (?,?)");
+
+			System.out.print("\nCompany Name: ");
+			companyName = in.readLine();
+			ps.setString(1, companyName);
+
+			System.out.print("\nDonation: ");
+			donation = Float.parseFloat(in.readLine());
+			ps.setFloat(2, donation);
+
+			ps.executeUpdate();
+
+			con.commit();
+
+			ps.close();
+
+		} catch (SQLException e) {
+			System.out.println("Message: " + e.getMessage());
+			try {
+				con.rollback();
+			} catch (SQLException e1) {
+				System.out.println("Message: " + e1.getMessage());
+				System.exit(-1);
+			}
+		} catch (IOException e) {
+			System.out.print("IO Exception...");
+		}
+	}
+
+	private void createBookkeeping() {
+		Date BookkeepingDate;
+		double income;
+		double expense;
+		int attendence;
+		double netIncome;
+		PreparedStatement ps;
+
+		try {
+			ps = con.prepareStatement("INSERT INTO BookKeeping1 VALUES (?,?,?,?,?)");
+
+			System.out.print("\nDate: ");
+			java.util.Date parseDate;
+			SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
+
+			try {
+				parseDate = formatDate.parse(in.readLine());
+				// might be parseDate.getDate()
+				BookkeepingDate = new Date(parseDate.getTime());
+				ps.setDate(1, BookkeepingDate);
+
+			} catch (ParseException e) {
+				System.out.println("Invalid Bookkeeping Date");
+			}
+
+			System.out.print("\nIncome: ");
+			income = Double.parseDouble(in.readLine());
+			ps.setDouble(2, income);
+
+			System.out.print("\nExpense: ");
+			expense = Double.parseDouble(in.readLine());
+			ps.setDouble(3, expense);
+
+			System.out.print("\nAttendence: ");
+			attendence = Integer.parseInt(in.readLine());
+			ps.setInt(4, attendence);
+
+			System.out.print("\nNet Income: ");
+			netIncome = Double.parseDouble(in.readLine());
+			ps.setDouble(5, netIncome);
+
+			ps.executeUpdate();
+
+			con.commit();
+
+			ps.close();
+
+		} catch (SQLException e) {
+			System.out.println("Message: " + e.getMessage());
+			try {
+				con.rollback();
+			} catch (SQLException e1) {
+				System.out.println("Message: " + e1.getMessage());
+				System.exit(-1);
+			}
+		} catch (IOException e) {
+			System.out.print("IO Exception...");
+		}
+	}
+
 	private void deleteItem() {
 		boolean repeat = true;
-		System.out.println(
-				"What type of item would you like to delete?\n" + "1. Event\n" + "2. Food\n" + "3. Merchandise\n");
+		System.out.println("Delete item selected.\n" + "What type of item would you like to delete?\n" + "1. Event\n"
+				+ "2. Food\n" + "3. Merchandise\n" + "4. Employee\n" + "5. Sponsorship");
 		System.out.print("Input: ");
 		input = scan.nextInt();
 		while (repeat) {
@@ -681,8 +793,16 @@ public class OptionSelector {
 				repeat = false;
 				deleteMerchandise();
 				break;
+			case 4:
+				repeat = false;
+				deleteEmployee();
+				break;
+			case 5:
+				repeat = false;
+				deleteSponsorship();
+				break;
 			default:
-				System.out.println("\nPlease Enter a Valid Number:\n");
+				System.out.println("Please Enter a Valid Number:");
 			}
 		}
 	}
@@ -730,6 +850,8 @@ public class OptionSelector {
 		String foodName;
 		PreparedStatement ps;
 
+		System.out.print("Don't forget to use '' around food name");
+
 		try {
 			ps = con.prepareStatement("DELETE FROM Food1 WHERE FoodName = ?");
 			System.out.print("\nFood Name: ");
@@ -768,6 +890,8 @@ public class OptionSelector {
 		String merchName;
 		PreparedStatement ps;
 
+		System.out.print("Don't forget to use '' around merchandise name");
+
 		try {
 			ps = con.prepareStatement("DELETE FROM Merchandise1 WHERE MName = ?");
 			System.out.print("\nMerchandise Name: ");
@@ -802,120 +926,150 @@ public class OptionSelector {
 		}
 	}
 
-	// assigns which employee works which event
-	// probably should use listEvent() from Guest and another helper function
-	// listEmployee() below
-	private void employeeAssginment() {
-		int employeeID;
-		int eventID;
-		boolean availability;
-		PreparedStatement ps;
-
-		try {
-			ps = con.prepareStatement("INSERT INTO WorksAt VALUES (?,?,?)");
-
-			System.out.print("\nEmployee ID: ");
-			employeeID = Integer.parseInt(in.readLine());
-			ps.setInt(1, employeeID);
-
-			System.out.print("\nEvent ID: ");
-			eventID = Integer.parseInt(in.readLine());
-			ps.setInt(2, eventID);
-
-			System.out.print("\nAvailability: ");
-			availability = Boolean.parseBoolean(in.readLine());
-			ps.setBoolean(3, availability);
-
-			ps.executeUpdate();
-
-			con.commit();
-
-			ps.close();
-
-		} catch (SQLException e) {
-			System.out.println("Message: " + e.getMessage());
-			try {
-				con.rollback();
-			} catch (SQLException e1) {
-				System.out.println("Message: " + e1.getMessage());
-				System.exit(-1);
-			}
-		} catch (IOException e) {
-			System.out.print("IO Exception...");
-		}
-	}
-
-	// list all employees for stadium
-	private void listEmployee() {
-
-	}
-
-	// actually not sure what managing sponsorship is for... someone fill me in
-	// but we probably should make another helper function listSponsors()
-	private void manageSponsorship() {
+	private void deleteSponsorship() {
 		String companyName;
-		int eventID;
-		int sizeOfAd;
 		PreparedStatement ps;
 
 		try {
-			ps = con.prepareStatement("INSERT INTO Sponsors (?,?,?)");
-
+			ps = con.prepareStatement("DELETE FROM Sponsorship1 WHERE CompanyName = ?");
 			System.out.print("\nCompany Name: ");
 			companyName = in.readLine();
 			ps.setString(1, companyName);
 
-			System.out.print("\nEvent ID: ");
-			eventID = Integer.parseInt(in.readLine());
-			ps.setInt(2, eventID);
+			int rowCount = ps.executeUpdate("DELETE FROM Sponsorship1 WHERE CompanyName = " + companyName);
 
-			System.out.print("\nMaking Cost: ");
-			sizeOfAd = Integer.parseInt(in.readLine());
-			ps.setInt(3, sizeOfAd);
-
-			ps.executeUpdate();
+			if (rowCount == 0) {
+				System.out.println("\n Merchandise " + companyName + " doesn't exist");
+			}
 
 			con.commit();
 
 			ps.close();
 
+			if (rowCount > 0) {
+				System.out.println("\n Delete complete");
+			}
+
 		} catch (SQLException e) {
 			System.out.println("Message: " + e.getMessage());
+
 			try {
 				con.rollback();
-			} catch (SQLException e1) {
-				System.out.println("Message: " + e1.getMessage());
+			} catch (SQLException ex1) {
+				System.out.println("Message: " + ex1.getMessage());
 				System.exit(-1);
 			}
 		} catch (IOException e) {
-			System.out.print("IO Exception...");
+			System.out.println("IO Exception");
 		}
 	}
 
-	// lists sponsors of the Stadium
-	// delete if not needed
-	private void listSponsors() {
+	// this is the view items menu
 
+	private void viewItem() {
+		boolean repeat = true;
+		System.out.println("View item selected.\n" + "What type of item would you like to view?\n" + "1. Event\n"
+				+ "2. Food\n" + "3. Merchandise\n" + "4. Employee\n" + "5. Sponsorship");
+		System.out.print("Input: ");
+		input = scan.nextInt();
+		while (repeat) {
+
+			switch (input) {
+			case 1:
+				repeat = false;
+				viewEvent();
+				break;
+			case 2:
+				repeat = false;
+				viewFood();
+				break;
+			case 3:
+				repeat = false;
+				viewMerchandise();
+				break;
+			case 4:
+				repeat = false;
+				viewEmployee();
+				break;
+			case 5:
+				repeat = false;
+				viewSponsorship();
+				break;
+			default:
+				System.out.println("Please Enter a Valid Number:");
+			}
+		}
 	}
 
-	// given date should return bookkeeping record for that day
-	// OR we can just display the last 4 day's worth of bookkeeping like nico
-	// suggested lol
-	// IF NEEDED make the helper function listBookKeeping() else delete the helper
-	// function
-	private void lookBookKeeping() {
-		String eventDate;
-		String income;
-		String expense;
-		String attendance;
-		String netIncome;
+	// view event
+
+	private void viewEvent() {
+		String Event_id;
+		String EventName;
+		String StartTime;
+		String EndTime;
+		String TicketSold;
+		String EDate;
 		ResultSet rs;
 		Statement s;
 
 		try {
 			s = con.createStatement();
 
-			rs = s.executeQuery("SELECT * FROM BookKeeping1");
+			rs = s.executeQuery("SELECT * FROM Stadium_Events");
+
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int numCols = rsmd.getColumnCount();
+
+			System.out.println(" ");
+
+			for (int i = 0; i < numCols; i++) {
+				System.out.printf("%-10s", rsmd.getColumnName(i + 1));
+			}
+
+			System.out.println(" ");
+
+			while (rs.next()) {
+				Event_id = rs.getString("Event_id");
+				System.out.printf("%-20.20s", Event_id);
+
+				EventName = rs.getString("EventName");
+				System.out.printf("%-15.15s", EventName);
+
+				StartTime = rs.getString("StartTime");
+				System.out.printf("%-30.30s", StartTime);
+
+				EndTime = rs.getString("EndTime");
+				System.out.printf("%-30.30s", EndTime);
+
+				TicketSold = rs.getString("TicketSold");
+				System.out.printf("%-15.15s", TicketSold);
+
+				EDate = rs.getString("EDate");
+				System.out.printf("%-15.15s\n", EDate);
+
+			}
+
+			s.close();
+
+		} catch (SQLException e) {
+			System.out.println("Message: " + e.getMessage());
+		}
+	}
+
+	// view food
+
+	private void viewFood() {
+		String FoodName;
+		String Availability;
+		String MakingCost;
+		ResultSet rs;
+		Statement s;
+
+		try {
+			s = con.createStatement();
+
+			rs = s.executeQuery("SELECT * FROM Food1");
 
 			ResultSetMetaData rsmd = rs.getMetaData();
 			int numCols = rsmd.getColumnCount();
@@ -929,20 +1083,109 @@ public class OptionSelector {
 			System.out.println(" ");
 
 			while (rs.next()) {
-				eventDate = rs.getString("Event Date");
-				System.out.printf("%-10.10s", eventDate);
+				FoodName = rs.getString("FoodName");
+				System.out.printf("%-20.20s", FoodName);
 
-				income = rs.getString("Income");
-				System.out.printf("%-20.20s", income);
+				Availability = rs.getString("Availability");
+				System.out.printf("%-15.15s", Availability);
 
-				expense = rs.getString("Expense");
-				System.out.printf("%-20.20s", expense);
+				MakingCost = rs.getString("MakingCost");
+				System.out.printf("%-20.20s\n", MakingCost);
 
-				attendance = rs.getString("Attendance");
-				System.out.printf("%-15.15s", attendance);
+			}
 
-				netIncome = rs.getString("Net Income");
-				System.out.printf("%-15.15s", netIncome);
+			s.close();
+
+		} catch (SQLException e) {
+			System.out.println("Message: " + e.getMessage());
+		}
+	}
+
+	// view Merchandise
+	private void viewMerchandise() {
+		String MName;
+		String Availability;
+		String MakingCost;
+		ResultSet rs;
+		Statement s;
+
+		try {
+			s = con.createStatement();
+
+			rs = s.executeQuery("SELECT * FROM Merchandise1");
+
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int numCols = rsmd.getColumnCount();
+
+			System.out.println(" ");
+
+			for (int i = 0; i < numCols; i++) {
+				System.out.printf("%-15s", rsmd.getColumnName(i + 1));
+			}
+
+			System.out.println(" ");
+
+			while (rs.next()) {
+				MName = rs.getString("MName");
+				System.out.printf("%-20.20s", MName);
+
+				Availability = rs.getString("Availability");
+				System.out.printf("%-15.15s", Availability);
+
+				MakingCost = rs.getString("MakingCost");
+				System.out.printf("%-20.20s\n", MakingCost);
+
+			}
+
+			s.close();
+
+		} catch (SQLException e) {
+			System.out.println("Message: " + e.getMessage());
+		}
+	}
+
+	// view employee table
+
+	private void viewEmployee() {
+		String Employee_id;
+		String EName;
+		String Phone_no;
+		String HourWorked;
+		String Occupation;
+		ResultSet rs;
+		Statement s;
+
+		try {
+			s = con.createStatement();
+
+			rs = s.executeQuery("SELECT * FROM Employee");
+
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int numCols = rsmd.getColumnCount();
+
+			System.out.println(" ");
+
+			for (int i = 0; i < numCols; i++) {
+				System.out.printf("%-15s", rsmd.getColumnName(i + 1));
+			}
+
+			System.out.println(" ");
+
+			while (rs.next()) {
+				Employee_id = rs.getString("Employee_id");
+				System.out.printf("%-15.15s", Employee_id);
+
+				EName = rs.getString("EName");
+				System.out.printf("%-15.15s", EName);
+
+				Phone_no = rs.getString("Phone_no");
+				System.out.printf("%-20.20s", Phone_no);
+
+				HourWorked = rs.getString("HourWorked");
+				System.out.printf("%-10.10s", HourWorked);
+
+				Occupation = rs.getString("Occupation");
+				System.out.printf("%-20.20s\n", Occupation);
 
 			}
 
@@ -954,13 +1197,13 @@ public class OptionSelector {
 	}
 
 	// TODO: Add other options you need
-	private void dataAnalysis() {
+	private void analyticsMenu() {
 		boolean repeat = true;
 
 		while (repeat) {
 
-			System.out.println("\nWhich data would you like to see?\n"
-					+ "1. See fans that participate in every event.\n" + "2. Find the Date with max income.\n"
+			System.out.println("\nWhat analyzes would you like to view?\n" + "1. Employee that worked the most hours\n"
+					+ "2. Fans that purchased tickets for every event\n"
 					+ "3. Find average number of tickets sold per day.\n" + "4. Return to menu.\n");
 
 			System.out.print("Input: ");
@@ -969,6 +1212,9 @@ public class OptionSelector {
 
 			switch (input) {
 			case 1:
+				employeeWithMostHours();
+				break;
+			case 2:
 				fanEveryEvent();
 				break;
 			case 3:
@@ -982,6 +1228,7 @@ public class OptionSelector {
 		}
 	}
 
+	// 1 2 3 5 6 7 9 100
 	private void fanEveryEvent() {
 
 		// all the fans that have purchased the ticket
@@ -1009,16 +1256,20 @@ public class OptionSelector {
 		List<Integer> trueFan = new ArrayList<>();
 
 		try {
+			Statement aa = con.createStatement();
+			ResultSet bb = aa.executeQuery("SELECT Event_id, Fan_ID FROM Tickets");
+
+			while (bb.next()) {
+				fans.add(bb.getInt("Fan_ID"));
+			}
+
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT Event_id, Fan_ID FROM Tickets");
 
 			while (rs.next()) {
-				fans.add(rs.getInt("Fan_ID"));
-			}
-
-			while (rs.next()) {
 				int currentFanID = rs.getInt("Fan_ID");
 				int currentEID = rs.getInt("Event_id");
+
 				if (fanAndEventNum.get(currentFanID) == null) {
 					Set<Integer> tempEID = new HashSet<>();
 					tempEID.add(currentEID);
@@ -1050,8 +1301,10 @@ public class OptionSelector {
 						Fname = r.getString("Fname");
 						CreditCardInfo = r.getString("CreditCardInfo");
 
-						System.out.println(currentRow + ". Fan ID: " + Fan_ID + " Phone Number: " + Phone_no
-								+ " Full Name: " + Fname + " Credit Card Info : " + CreditCardInfo);
+						
+						System.out.println(currentRow + ". Fan ID: " + Fan_ID);
+						//System.out.println(currentRow + ". Fan ID: " + Fan_ID + " Phone Number: " + Phone_no
+						//		+ " Full Name: " + Fname + " Credit Card Info : " + CreditCardInfo);
 
 						currentRow++;
 					}
@@ -1067,21 +1320,394 @@ public class OptionSelector {
 
 	}
 
-	// TODO: NEEDED?
-	private void listBookKeeping() {
+	private void employeeWithMostHours() {
+		int employeeID = 0;
+		String employeeName;
+		int hoursWorked = 0;
+		String HourWorked;
+		ResultSet rs;
+		Statement s;
+		PreparedStatement ps;
+		try {
 
+			s = con.createStatement();
+			rs = s.executeQuery("SELECT MAX(HourWorked) FROM Employee");
+
+			while (rs.next()) {
+				hoursWorked = rs.getInt(1);
+				System.out.printf("Hours Worked: ");
+				System.out.printf("%-15.15s\n", hoursWorked);
+			}
+
+			s = con.createStatement();
+			ps = con.prepareStatement("SELECT Employee_id, EName FROM Employee WHERE HourWorked = ?");
+
+			ps.setInt(1, hoursWorked);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				employeeID = rs.getInt(1);
+				employeeName = rs.getString(2);
+				System.out.printf("Employee ID: ");
+				System.out.printf("%-15.15s\n", employeeID);
+				System.out.printf("Employee Name: ");
+				System.out.printf("%-15.15s\n", employeeName);
+			}
+
+			con.commit();
+
+			s.close();
+
+		} catch (SQLException e) {
+			System.out.println("Message: " + e.getMessage());
+
+		}
 	}
 
-	// TODO: NEEDED?
+	// assigns which employee works which event
+	// probably should use listEvent() from Guest and another helper function
+	// listEmployee() below
+	private void employeeAssginment() {
+		int employeeID;
+		int eventID;
+		int availability;
+		PreparedStatement ps;
+
+		String occupation = " ";
+		double wage = 0;
+
+		double employeeCost = 0;
+		java.util.Date utilDate = null;
+		String stringDate = new String("2019-03-01");
+		SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			utilDate = fm.parse(stringDate);
+		} catch (ParseException pe) {
+			return;
+		}
+
+		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+
+		try {
+			ps = con.prepareStatement("INSERT INTO WorksAt VALUES (?,?,?)");
+
+			System.out.print("\nEmployee ID: ");
+			employeeID = Integer.parseInt(in.readLine());
+			ps.setInt(1, employeeID);
+
+			System.out.print("\nEvent ID: ");
+			eventID = Integer.parseInt(in.readLine());
+			ps.setInt(2, eventID);
+
+			System.out.print("\nAvailability: ");
+			availability = Integer.parseInt(in.readLine());
+			ps.setInt(3, availability);
+
+			ps.executeUpdate();
+
+			con.commit();
+
+			// ps.close();
+
+			try {
+				// update ticketsSold in Stadium_Events
+				ps = con.prepareStatement("SELECT HourWorked FROM Employee WHERE Employee_id = ?");
+
+				ps.setInt(1, employeeID);
+
+				ResultSet rs = ps.executeQuery();
+
+				if (rs.next()) {
+					employeeCost = rs.getInt(1);
+
+				}
+
+				ps = con.prepareStatement("SELECT Occupation FROM Employee WHERE Employee_id = ?");
+
+				ps.setInt(1, employeeID);
+
+				rs = ps.executeQuery();
+
+				if (rs.next()) {
+					occupation = rs.getString(1);
+				}
+
+				ps = con.prepareStatement("SELECT HourlyWage FROM Occupations WHERE Occupation = ?");
+
+				ps.setString(1, occupation);
+
+				rs = ps.executeQuery();
+
+				if (rs.next()) {
+					wage = rs.getDouble(1);
+				}
+
+				employeeCost = employeeCost * wage;
+
+				// get the date of the event
+				ps = con.prepareStatement("SELECT Edate FROM Stadium_Events WHERE Event_id = ?");
+
+				ps.setInt(1, eventID);
+
+				rs = ps.executeQuery();
+
+				if (rs.next()) {
+					sqlDate = rs.getDate(1);
+				}
+
+				// update the Income in bookkeeping of that specific date
+				ps = con.prepareStatement("UPDATE BookKeeping1 SET Expense = Expense + ? WHERE Edate = ?");
+
+				ps.setDouble(1, employeeCost);
+				ps.setDate(2, sqlDate);
+
+				ps.executeUpdate();
+
+				// commit work
+				con.commit();
+
+				// added to the end
+				ps.close();
+
+			} catch (SQLException ex) {
+				System.out.println("Message: " + ex.getMessage());
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Message: " + e.getMessage());
+			try {
+				con.rollback();
+			} catch (SQLException e1) {
+				System.out.println("Message: " + e1.getMessage());
+				System.exit(-1);
+			}
+		} catch (IOException e) {
+			System.out.print("IO Exception...");
+		}
+	}
+
+	private void manageSponsorship() {
+		String companyName;
+		int eventID;
+		int sizeOfAd;
+		PreparedStatement ps = null;
+
+		java.util.Date utilDate = null;
+		String stringDate = new String("2019-03-01");
+		SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			utilDate = fm.parse(stringDate);
+		} catch (ParseException pe) {
+			return;
+		}
+
+		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+
+		try {
+			ps = con.prepareStatement("INSERT INTO Sponsors VALUES (?,?,?)");
+
+			System.out.print("\nCompany Name: ");
+			companyName = in.readLine();
+			ps.setString(1, companyName);
+
+			System.out.print("\nEvent ID: ");
+			eventID = Integer.parseInt(in.readLine());
+			ps.setInt(2, eventID);
+
+			System.out.print("\nSize of Ad: ");
+			sizeOfAd = Integer.parseInt(in.readLine());
+			ps.setInt(3, sizeOfAd);
+
+			ps.executeUpdate();
+
+			con.commit();
+
+			// ps.close();
+
+			try {
+				// get donation amount
+				ps = con.prepareStatement("SELECT * FROM Sponsorship1 WHERE rtrim(CompanyName) = ?");
+
+				ps.setString(1, companyName);
+
+				System.out.print(companyName);
+
+				ResultSet rs = ps.executeQuery();
+				float donation = (float) 0;
+
+				while (rs.next()) {
+					donation = rs.getFloat(2);
+					System.out.println("\nDonations: " + donation);
+					System.out.print("xxx");
+				}
+				// System.out.println("\nDonations: " + donation);
+				// commit work
+				// con.commit();
+
+				// get the date of the event
+				ps = con.prepareStatement("SELECT Edate FROM Stadium_Events WHERE Event_id = ?");
+
+				ps.setInt(1, eventID);
+
+				rs = ps.executeQuery();
+
+				if (rs.next()) {
+					sqlDate = rs.getDate(1);
+				}
+
+				System.out.println("\nDate: " + sqlDate);
+
+				// update the Income in bookkeeping of that specific date
+				ps = con.prepareStatement("UPDATE BookKeeping1 SET Income = Income + ? WHERE Edate = ?");
+
+				ps.setFloat(1, donation);
+				ps.setDate(2, sqlDate);
+
+				ps.executeUpdate();
+
+				// commit work
+				con.commit();
+
+				// added so it could work
+				ps.close();
+
+			} catch (SQLException ex) {
+				System.out.println("Message: " + ex.getMessage());
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Message: " + e.getMessage());
+			try {
+				con.rollback();
+			} catch (SQLException e1) {
+				System.out.println("Message: " + e1.getMessage());
+				System.exit(-1);
+			}
+		} catch (IOException e) {
+			System.out.print("IO Exception...");
+		}
+	}
+
+	// lists sponsors of the Stadium
+
+	private void viewSponsorship() {
+		String CompanyName;
+		String Donations;
+		ResultSet rs;
+		Statement s;
+
+		try {
+			s = con.createStatement();
+
+			rs = s.executeQuery("SELECT * FROM Sponsorship1");
+
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int numCols = rsmd.getColumnCount();
+
+			System.out.println(" ");
+
+			for (int i = 0; i < numCols; i++) {
+				System.out.printf("%-15s", rsmd.getColumnName(i + 1));
+			}
+
+			System.out.println(" ");
+
+			while (rs.next()) {
+				CompanyName = rs.getString("CompanyName");
+				System.out.printf("%-15.15s", CompanyName);
+
+				Donations = rs.getString("Donations");
+				System.out.printf("%-15.15s\n", Donations);
+
+			}
+
+			s.close();
+
+		} catch (SQLException e) {
+			System.out.println("Message: " + e.getMessage());
+		}
+	}
+
+	// given date should return bookkeeping record for that day
+	// OR we can just display the last 4 day's worth of bookkeeping like nico
+	// suggested lol
+	// IF NEEDED make the helper function listBookKeeping() else delete the helper
+	// function
+	private void lookBookKeeping() {
+		String EDate;
+		String Income;
+		String Expense;
+		String Attendence;
+		String NetIncome;
+		ResultSet rs;
+		Statement s;
+
+		try {
+			s = con.createStatement();
+
+			try {
+				PreparedStatement ps = null;
+
+				ps = con.prepareStatement("UPDATE BookKeeping1 SET NetIncome = Income - Expense WHERE EDate = EDate");
+
+				ps.executeUpdate();
+
+				con.commit();
+
+			} catch (SQLException e1) {
+				System.out.println("Message: " + e1.getMessage());
+			}
+
+			rs = s.executeQuery("SELECT * FROM BookKeeping1");
+
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int numCols = rsmd.getColumnCount();
+
+			System.out.println(" ");
+
+			for (int i = 0; i < numCols; i++) {
+				System.out.printf("%-15s", rsmd.getColumnName(i + 1));
+			}
+
+			System.out.println(" ");
+
+			while (rs.next()) {
+				EDate = rs.getString("EDate");
+				System.out.printf("%-25.25s", EDate);
+
+				Income = rs.getString("Income");
+				System.out.printf("%-10.10s", Income);
+
+				Expense = rs.getString("Expense");
+				System.out.printf("%-10.10s", Expense);
+
+				Attendence = rs.getString("Attendence");
+				System.out.printf("%-10.10s", Attendence);
+
+				NetIncome = rs.getString("NetIncome");
+
+				System.out.printf("%-10.10s\n", NetIncome);
+
+			}
+
+			s.close();
+
+		} catch (SQLException e) {
+			System.out.println("Message: " + e.getMessage());
+		}
+	}
+
 	private void createEmployee() {
 		int employeeID;
 		String employeeName;
 		int phoneNumber;
+		int hourWorked;
 		String occupation;
 		PreparedStatement ps;
 
 		try {
-			ps = con.prepareStatement("INSERT INTO Employee VALUES (?,?,?,?)");
+			ps = con.prepareStatement("INSERT INTO Employee VALUES (?,?,?,?,?)");
 
 			System.out.print("\nEmployee ID: ");
 			employeeID = Integer.parseInt(in.readLine());
@@ -1095,9 +1721,13 @@ public class OptionSelector {
 			phoneNumber = Integer.parseInt(in.readLine());
 			ps.setInt(3, phoneNumber);
 
+			System.out.print("\nHours Worked: ");
+			hourWorked = Integer.parseInt(in.readLine());
+			ps.setInt(4, hourWorked);
+
 			System.out.print("\nOccupation: ");
 			occupation = in.readLine();
-			ps.setString(3, occupation);
+			ps.setString(5, occupation);
 
 			ps.executeUpdate();
 
@@ -1118,7 +1748,6 @@ public class OptionSelector {
 		}
 	}
 
-	// TODO: NEEDED?
 	private void deleteEmployee() {
 		int employeeID;
 		PreparedStatement ps;
@@ -1839,13 +2468,13 @@ public class OptionSelector {
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
-		
-		System.out.println("\n0: Return.");
+
+		System.out.println("\n0: Return.\n");
 		System.out.print("Input: ");
 		input = scan.nextInt();
 
 		while (input != 0) {
-			System.out.println("\n0: Return.");
+			System.out.println("\n0: Return.\n");
 			System.out.print("Input: ");
 			input = scan.nextInt();
 		}

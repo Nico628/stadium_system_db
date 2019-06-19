@@ -135,7 +135,7 @@ public class StadiumSystem implements ActionListener {
 
 	// Connect to database
 	private boolean connection(String username, String password) {
-		String connectURL = "jdbc:mysql://localhost:3306/db?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+		String connectURL = "jdbc:mysql://localhost:3306/db?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=PST";
 		
 		try {
 		    Class.forName("com.mysql.cj.jdbc.Driver");
