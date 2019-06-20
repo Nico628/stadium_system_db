@@ -30,6 +30,7 @@ public class OptionSelector {
 	private int eventID;
 	private String foodName;
 	private String merchName;
+	private int password = 12345;
 
 	// added by Joao
 	private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -426,6 +427,15 @@ public class OptionSelector {
 	// =============================================MANAGER================================================
 
 	private void manager() {
+		
+		System.out.println("Enter password: ");
+		input = scan.nextInt();
+		while(input != password) {
+			System.out.println("Invalid password, please try again or enter 0 to return:");
+			input = scan.nextInt();
+			if(input == 0)
+				return;
+		}
 
 		boolean repeat = true;
 
@@ -435,8 +445,8 @@ public class OptionSelector {
 					+ "1. Create new Event/Food/Merchandise/Employee/Sponsorship/BookKeeping\n"
 					+ "2. Delete Event/Food/Merchandise/Employee/Sponsorship\n"
 					+ "3. View Event/Food/Merchandise/Employee/Sponsorship\n" + "4. Employee assignment\n"
-					+ "5. Look at analytics\n" + "6. Look bookkeeping records\n" + "7. Manage Sponsorship\n"
-					+ "8. Return.\n");
+					+ "5. Look at analytics\n" + "6. Look at bookkeeping records\n" + "7. Manage Sponsorship\n"
+					+ "8. Update employee hours.\n" + "9. Return.\n");
 			System.out.print("Input: ");
 			input = scan.nextInt();
 
@@ -463,6 +473,9 @@ public class OptionSelector {
 				manageSponsorship();
 				break;
 			case 8:
+				updateEmployeeHours();
+				break;
+			case 9:
 				return;
 			default:
 				System.out.println("\nPlease Enter a Valid Number:\n");
@@ -1100,13 +1113,14 @@ public class OptionSelector {
 
 	private void viewItem() {
 		boolean repeat = true;
-		
+
 		while (repeat) {
 			System.out.println("View item selected.\n" + "What type of item would you like to view?\n" + "1. Event\n"
-					+ "2. Food\n" + "3. Merchandise\n" + "4. Employee\n" + "5. Sponsorship\n" + "6. Return.\n");
+					+ "2. Food\n" + "3. Merchandise\n" + "4. Employee\n" + "5. Sponsorship\n"
+					+ "6. Employee Assignment\n" + "7. Return.\n");
 			System.out.print("Input: ");
 			input = scan.nextInt();
-			
+
 			switch (input) {
 			case 1:
 				viewEvent();
@@ -1124,6 +1138,9 @@ public class OptionSelector {
 				viewSponsorship();
 				break;
 			case 6:
+				viewEmployeeAssignment();
+				break;
+			case 7:
 				return;
 			default:
 				System.out.println("Please Enter a Valid Number:");
@@ -1157,8 +1174,9 @@ public class OptionSelector {
 				EndTime = rs.getString("EndTime");
 
 				TicketSold = rs.getInt("TicketSold");
-				
-				System.out.println("Event_id: " + Event_id + "   EventName: " + EventName.trim() + "  StartTime: " + StartTime.trim() + "   EndTime: " + EndTime.trim() + "   Ticket Sold: " + TicketSold);
+
+				System.out.println("Event_id: " + Event_id + "   EventName: " + EventName.trim() + "  StartTime: "
+						+ StartTime.trim() + "   EndTime: " + EndTime.trim() + "   Ticket Sold: " + TicketSold);
 			}
 
 			s.close();
@@ -1472,7 +1490,7 @@ public class OptionSelector {
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
-		
+
 		int input;
 
 		System.out.println("\n0: Return.\n");
@@ -1527,7 +1545,7 @@ public class OptionSelector {
 			System.out.println("Message: " + e.getMessage());
 
 		}
-		
+
 		int input;
 
 		System.out.println("\n0: Return.\n");
@@ -1651,7 +1669,7 @@ public class OptionSelector {
 		} catch (IOException e) {
 			System.out.print("IO Exception...");
 		}
-		
+
 		int input;
 
 		System.out.println("\n0: Return.\n");
@@ -1848,8 +1866,9 @@ public class OptionSelector {
 				Income = rs.getString("Income");
 				Expense = rs.getString("Expense");
 				NetIncome = rs.getString("NetIncome");
-				
-				System.out.println("Date: " + EDate.trim() + "   Income: " + Income.trim() + "   Expense: " + Expense.trim() + "   NetIncome: " + NetIncome.trim());
+
+				System.out.println("Date: " + EDate.trim() + "   Income: " + Income.trim() + "   Expense: "
+						+ Expense.trim() + "   NetIncome: " + NetIncome.trim());
 
 			}
 
@@ -1858,7 +1877,7 @@ public class OptionSelector {
 		} catch (SQLException e) {
 			System.out.println("Message: " + e.getMessage());
 		}
-		
+
 		int input;
 
 		System.out.println("\n0: Return.\n");
@@ -2663,6 +2682,73 @@ public class OptionSelector {
 			System.out.print("Input: ");
 			input = scan.nextInt();
 		}
+	}
+
+	// update Employee working hours
+	private void updateEmployeeHours() {
+		int eid = 0;
+		int hours = 0;
+		PreparedStatement ps;
+
+		System.out.println("\nEmployee ID:");
+		System.out.print("Input: ");
+		eid = scan.nextInt();
+
+		System.out.println("\nAdditional hours:");
+		System.out.print("Input: ");
+		hours = scan.nextInt();
+
+		try {
+			// update ticketsSold in Stadium_Events
+			ps = con.prepareStatement("UPDATE Employee SET HourWorked = HourWorked + ? WHERE Employee_id = ?");
+
+			ps.setInt(1, hours);
+			ps.setInt(2, eid);
+
+			ps.executeUpdate();
+
+			// commit work
+			con.commit();
+
+		} catch (SQLException ex) {
+			return;
+		}
+	}
+
+	// view employee assingment
+	private void viewEmployeeAssignment() {
+		PreparedStatement ps;
+		int eid;
+		int emid;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM WorksAt");
+
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				eid = rs.getInt("Event_id");
+				emid = rs.getInt("Employee_id");
+
+				System.out.println("Employee Id: " + eid + "   Event ID: " + emid);
+			}
+
+		} catch (SQLException ex) {
+			return;
+		}
+
+		int input;
+
+		System.out.println("\n0: Return.\n");
+		System.out.print("Input: ");
+		input = scan.nextInt();
+
+		while (input != 0) {
+			System.out.println("\n0: Return.\n");
+			System.out.print("Input: ");
+			input = scan.nextInt();
+		}
+
 	}
 
 }
