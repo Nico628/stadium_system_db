@@ -95,7 +95,7 @@ public class OptionSelector {
 			fanCheck = checkForExistingFan(input);
 
 			// deal with invalid ID
-			while (input < 0 || input > 10000 || fanCheck == false) {
+			while (input < 0 || fanCheck == false) {
 				System.out.println("\nPlease Enter a Valid ID:");
 				System.out.print("Input: ");
 				input = scan.nextInt();
@@ -431,9 +431,12 @@ public class OptionSelector {
 
 		while (repeat) {
 			System.out.println("");
-			System.out.println("What would you like to do today?\n" + "1. Create new Event/Food/Merchandise/Employee/Sponsorship/BookKeeping\n" + "2. Delete Event/Food/Merchandise/Employee/Sponsorship\n" 
-					+ "3. View Event/Food/Merchandise/Employee/Sponsorship\n" + "4. Employee assignment\n" + 
-					"5. Look at analytics\n" + "6. Look bookkeeping records\n" + "7. Manage Sponsorship\n" + "8. Return.\n");
+			System.out.println("What would you like to do today?\n"
+					+ "1. Create new Event/Food/Merchandise/Employee/Sponsorship/BookKeeping\n"
+					+ "2. Delete Event/Food/Merchandise/Employee/Sponsorship\n"
+					+ "3. View Event/Food/Merchandise/Employee/Sponsorship\n" + "4. Employee assignment\n"
+					+ "5. Look at analytics\n" + "6. Look bookkeeping records\n" + "7. Manage Sponsorship\n"
+					+ "8. Return.\n");
 			System.out.print("Input: ");
 			input = scan.nextInt();
 
@@ -511,19 +514,40 @@ public class OptionSelector {
 	// From Joao. formally addEvent();
 	private void createEvent() {
 
-		int EventID;
+		int EventID = 0;
 		String EventName;
 		Date StartTime;
 		Date endTime;
 		int TicketSold;
 		Date EventDate;
 		PreparedStatement ps;
+		int input;
+		String ht = "";
+		String at = "";
+		String st = "";
+		String perf = "";
+		int cap = 0;
 
 		try {
+			// get the last inserted ID
+			ps = con.prepareStatement("SELECT event_counter FROM Counters WHERE CID = 0 FOR UPDATE");
+
+			ResultSet rs = ps.executeQuery();
+			if (rs.next())
+				EventID = rs.getInt(1);
+
+			EventID++;
+
+			// update ID
+			ps = con.prepareStatement("UPDATE Counters SET event_counter = event_counter + 1");
+
+			ps.executeUpdate();
+
+			// commit work
+			con.commit();
+
 			ps = con.prepareStatement("INSERT INTO Stadium_Events VALUES (?,?,?,?,?,?)");
 
-			System.out.print("\nEvent ID: ");
-			EventID = Integer.parseInt(in.readLine());
 			ps.setInt(1, EventID);
 
 			System.out.print("\nEvent Name: ");
@@ -531,33 +555,36 @@ public class OptionSelector {
 			ps.setString(2, EventName);
 
 			System.out.print("\nStart Time: ");
-			java.util.Date parseStartTime;
-			SimpleDateFormat formatStart = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+			String stringTS = in.readLine();
+			SimpleDateFormat tm = new SimpleDateFormat("yyyy-MM-dd H:mm:ss");
+			java.util.Date utilTS1 = null;
 			try {
-				parseStartTime = formatStart.parse(in.readLine());
-				StartTime = new Date(parseStartTime.getTime());
-				ps.setDate(3, StartTime);
-
-			} catch (ParseException e) {
-				System.out.println("Invalid Start Time");
+				utilTS1 = tm.parse(stringTS);
+			} catch (ParseException pe) {
+				System.out.println("Message: " + pe.getMessage());
 			}
+
+			java.sql.Timestamp sqlTS1 = new java.sql.Timestamp(utilTS1.getTime());
+
+			ps.setTimestamp(3, sqlTS1);
 
 			System.out.print("\nEnd Time: ");
-			java.util.Date parseEndTime;
-			SimpleDateFormat formatEnd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+			String stringTS2 = in.readLine();
+			SimpleDateFormat tm2 = new SimpleDateFormat("yyyy-MM-dd H:mm:ss");
+			java.util.Date utilTS2 = null;
 			try {
-				parseEndTime = formatStart.parse(in.readLine());
-				endTime = new Date(parseEndTime.getTime());
-				ps.setDate(4, endTime);
-
-			} catch (ParseException e) {
-				System.out.println("Invalid End Time");
+				utilTS2 = tm2.parse(stringTS2);
+			} catch (ParseException pe) {
+				System.out.println("Message: " + pe.getMessage());
 			}
 
-			System.out.print("\nTickets Sold: ");
-			TicketSold = Integer.parseInt(in.readLine());
+			java.sql.Timestamp sqlTS2 = new java.sql.Timestamp(utilTS2.getTime());
+
+			ps.setTimestamp(4, sqlTS2);
+
+			TicketSold = 0;
 			ps.setInt(5, TicketSold);
 
 			System.out.print("\nEvent Date: ");
@@ -577,15 +604,91 @@ public class OptionSelector {
 
 			con.commit();
 
+			//
+			System.out.println("\nEnter 0 for Concerts, 1 for Games.\n");
+			System.out.print("Input: ");
+			input = scan.nextInt();
+
+			while (input < 0 || input > 1) {
+				System.out.println("Please enter a valid input.\n");
+				input = scan.nextInt();
+			}
+
+			// Stadium_Events(Event_id, StartTime, EndTime, TicketSold, Edate)
+
+			// Games(Event_id, HomeTeam, AwayTeam)
+			// Team(HomeTeam, sportsType)
+
+			if (input == 1) {
+				System.out.println("\nPlease enter the Home Team.\n");
+				System.out.print("Input: ");
+				ht = in.readLine();
+
+				System.out.println("\nPlease enter the Sportstype.\n");
+				System.out.print("Input: ");
+				st = in.readLine();
+
+				// insert into Team
+				ps = con.prepareStatement("INSERT INTO Team VALUES (?,?)");
+				ps.setString(1, ht);
+				ps.setString(2, st);
+				ps.executeUpdate();
+
+				con.commit();
+
+				System.out.println("\nPlease enter the Away Team.\n");
+				System.out.print("Input: ");
+				at = in.readLine();
+
+				// insert into games
+				ps = con.prepareStatement("INSERT INTO Games VALUES (?,?,?)");
+				ps.setInt(1, EventID);
+				ps.setString(2, ht);
+				ps.setString(3, at);
+				ps.executeUpdate();
+
+				con.commit();
+
+			} else { // Concerts(Event_id, Performer, Capacity)
+				// concerts
+				System.out.println("\nPlease enter the Performer.\n");
+				System.out.print("Input: ");
+				perf = in.readLine();
+
+				System.out.println("\nPlease enter the capacity.\n");
+				System.out.print("Input: ");
+				cap = scan.nextInt();
+
+				ps = con.prepareStatement("INSERT INTO Concerts VALUES (?,?,?)");
+				ps.setInt(1, EventID);
+				ps.setString(2, perf);
+				ps.setInt(3, cap);
+				ps.executeUpdate();
+
+				con.commit();
+
+			}
+
 			ps.close();
 
 		} catch (SQLException e) {
-			System.out.println("Message: " + e.getMessage());
 			try {
-				con.rollback();
-			} catch (SQLException e1) {
-				System.out.println("Message: " + e1.getMessage());
-				System.exit(-1);
+				System.out.println("\nPlease enter the Away Team.\n");
+				System.out.print("Input: ");
+				at = in.readLine();
+
+				// insert into games
+				ps = con.prepareStatement("INSERT INTO Games VALUES (?,?,?)");
+				ps.setInt(1, EventID);
+				ps.setString(2, ht);
+				ps.setString(3, at);
+				ps.executeUpdate();
+
+				con.commit();
+			} catch (SQLException et) {
+				return;
+			} catch (IOException ett) {
+				System.out.print("IO Exception...");
 			}
 		} catch (IOException e) {
 			System.out.print("IO Exception...");
@@ -595,40 +698,68 @@ public class OptionSelector {
 
 	// add new Food to database
 	private void createFood() {
-		String foodName;
-		int availability;
-		int makingCost;
+		String foodName = "";
+		int availability = 0;
+		int makingCost = 0;
 		PreparedStatement ps;
+		int sp = 0;
 
 		try {
-			ps = con.prepareStatement("INSERT INTO Food1 VALUES(?,?,?)");
+			
+			ps = con.prepareStatement("INSERT INTO Food1 VALUES(?,1,?)");
 
 			System.out.print("\nFood Name: ");
 			foodName = in.readLine();
 			ps.setString(1, foodName);
 
-			System.out.print("\nAvailability: ");
-			availability = Integer.parseInt(in.readLine());
-			ps.setInt(2, availability);
 
 			System.out.print("\nMaking Cost: ");
 			makingCost = Integer.parseInt(in.readLine());
-			ps.setInt(3, makingCost);
+			ps.setInt(2, makingCost);
 
 			ps.executeUpdate();
 
 			con.commit();
-
-			ps.close();
+		
 
 		} catch (SQLException e) {
-			System.out.println("Message: " + e.getMessage());
-			try {
-				con.rollback();
-			} catch (SQLException e1) {
-				System.out.println("Message: " + e1.getMessage());
-				System.exit(-1);
-			}
+			return;
+		} catch (IOException e) {
+			System.out.print("IO Exception...");
+		}
+		
+		
+		try {
+			System.out.print("\nSelling Price: ");
+			sp = Integer.parseInt(in.readLine());
+			
+			ps = con.prepareStatement("INSERT INTO Food2 VALUES(?,?)");
+			ps.setInt(1, makingCost);
+			ps.setInt(2, sp);
+			
+			ps.executeUpdate();
+
+			con.commit();
+		} catch (SQLException e) {
+			return;
+		} catch (IOException e) {
+			System.out.print("IO Exception...");
+		}
+		
+		try { // F_sells(Event_Id, FoodName, Quantity)
+			int eventid = 0;
+			System.out.print("\nThe event that the food sells in: ");
+			eventid = Integer.parseInt(in.readLine());
+			
+			ps = con.prepareStatement("INSERT INTO F_sells VALUES(?,?,0)");
+			ps.setInt(1, eventid);
+			ps.setString(2, foodName);
+			
+			ps.executeUpdate();
+
+			con.commit();
+		} catch (SQLException e) {
+			return;
 		} catch (IOException e) {
 			System.out.print("IO Exception...");
 		}
@@ -636,25 +767,22 @@ public class OptionSelector {
 
 	// add new Merchandise to database
 	private void createMerchandise() {
-		String merchandiseName;
-		int availability;
-		int makingCost;
+		String merchandiseName = "";
+		int availability = 1;
+		int makingCost = 0;
+		int sp = 0;
 		PreparedStatement ps;
 
 		try {
-			ps = con.prepareStatement("INSERT INTO Merchandise1 VALUES (?,?,?)");
+			ps = con.prepareStatement("INSERT INTO Merchandise1 VALUES (?,1,?)");
 
 			System.out.print("\nMerchandise Name: ");
 			merchandiseName = in.readLine();
 			ps.setString(1, merchandiseName);
 
-			System.out.print("\nAvailability: ");
-			availability = Integer.parseInt(in.readLine());
-			ps.setInt(2, availability);
-
 			System.out.print("\nMaking Cost: ");
 			makingCost = Integer.parseInt(in.readLine());
-			ps.setInt(3, makingCost);
+			ps.setInt(2, makingCost);
 
 			ps.executeUpdate();
 
@@ -663,13 +791,43 @@ public class OptionSelector {
 			ps.close();
 
 		} catch (SQLException e) {
-			System.out.println("Message: " + e.getMessage());
-			try {
-				con.rollback();
-			} catch (SQLException e1) {
-				System.out.println("Message: " + e1.getMessage());
-				System.exit(-1);
-			}
+			return;
+		} catch (IOException e) {
+			System.out.print("IO Exception...");
+		}
+		
+		
+		try {
+			System.out.print("\nSelling Price: ");
+			sp = Integer.parseInt(in.readLine());
+			
+			ps = con.prepareStatement("INSERT INTO Merchandise2 VALUES(?,?)");
+			ps.setInt(1, makingCost);
+			ps.setInt(2, sp);
+			
+			ps.executeUpdate();
+
+			con.commit();
+		} catch (SQLException e) {
+			return;
+		} catch (IOException e) {
+			System.out.print("IO Exception...");
+		}
+		
+		try { // M_sells(Event_Id, FoodName, Quantity)
+			int eventid = 0;
+			System.out.print("\nThe event that the merchandise sells in: ");
+			eventid = Integer.parseInt(in.readLine());
+			
+			ps = con.prepareStatement("INSERT INTO M_sells VALUES(?,?,0)");
+			ps.setInt(1, eventid);
+			ps.setString(2, merchandiseName);
+			
+			ps.executeUpdate();
+
+			con.commit();
+		} catch (SQLException e) {
+			return;
 		} catch (IOException e) {
 			System.out.print("IO Exception...");
 		}
@@ -721,7 +879,7 @@ public class OptionSelector {
 		PreparedStatement ps;
 
 		try {
-			ps = con.prepareStatement("INSERT INTO BookKeeping1 VALUES (?,?,?,?,?)");
+			ps = con.prepareStatement("INSERT INTO BookKeeping1 VALUES (?,0,0,0,0)");
 
 			System.out.print("\nDate: ");
 			java.util.Date parseDate;
@@ -736,22 +894,6 @@ public class OptionSelector {
 			} catch (ParseException e) {
 				System.out.println("Invalid Bookkeeping Date");
 			}
-
-			System.out.print("\nIncome: ");
-			income = Double.parseDouble(in.readLine());
-			ps.setDouble(2, income);
-
-			System.out.print("\nExpense: ");
-			expense = Double.parseDouble(in.readLine());
-			ps.setDouble(3, expense);
-
-			System.out.print("\nAttendence: ");
-			attendence = Integer.parseInt(in.readLine());
-			ps.setInt(4, attendence);
-
-			System.out.print("\nNet Income: ");
-			netIncome = Double.parseDouble(in.readLine());
-			ps.setDouble(5, netIncome);
 
 			ps.executeUpdate();
 
@@ -1301,10 +1443,10 @@ public class OptionSelector {
 						Fname = r.getString("Fname");
 						CreditCardInfo = r.getString("CreditCardInfo");
 
-						
 						System.out.println(currentRow + ". Fan ID: " + Fan_ID);
-						//System.out.println(currentRow + ". Fan ID: " + Fan_ID + " Phone Number: " + Phone_no
-						//		+ " Full Name: " + Fname + " Credit Card Info : " + CreditCardInfo);
+						// System.out.println(currentRow + ". Fan ID: " + Fan_ID + " Phone Number: " +
+						// Phone_no
+						// + " Full Name: " + Fname + " Credit Card Info : " + CreditCardInfo);
 
 						currentRow++;
 					}
@@ -1699,7 +1841,7 @@ public class OptionSelector {
 	}
 
 	private void createEmployee() {
-		int employeeID;
+		int employeeID = 0;
 		String employeeName;
 		int phoneNumber;
 		int hourWorked;
@@ -1707,10 +1849,25 @@ public class OptionSelector {
 		PreparedStatement ps;
 
 		try {
+			// get the last inserted ID
+			ps = con.prepareStatement("SELECT employee_counter FROM Counters WHERE CID = 0 FOR UPDATE");
+
+			ResultSet rs = ps.executeQuery();
+			if (rs.next())
+				employeeID = rs.getInt(1);
+
+			employeeID++;
+
+			// update ID
+			ps = con.prepareStatement("UPDATE Counters SET employee_counter = employee_counter + 1");
+
+			ps.executeUpdate();
+
+			// commit work
+			con.commit();
+
 			ps = con.prepareStatement("INSERT INTO Employee VALUES (?,?,?,?,?)");
 
-			System.out.print("\nEmployee ID: ");
-			employeeID = Integer.parseInt(in.readLine());
 			ps.setInt(1, employeeID);
 
 			System.out.print("\nEmployee Name: ");
