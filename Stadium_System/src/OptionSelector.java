@@ -474,36 +474,33 @@ public class OptionSelector {
 	private void createItem() {
 		boolean repeat = true;
 		System.out.println("Create item selected.\n" + "What type of item would you like to create?\n" + "1. Event\n"
-				+ "2. Food\n" + "3. Merchandise\n" + "4. Employee\n" + "5. Sponsorship\n" + "6. Bookkeeping");
+				+ "2. Food\n" + "3. Merchandise\n" + "4. Employee\n" + "5. Sponsorship\n" + "6. Bookkeeping\n"
+				+ "7. Return.\n");
 		System.out.print("Input: ");
 		input = scan.nextInt();
 		while (repeat) {
 
 			switch (input) {
 			case 1:
-				repeat = false;
 				createEvent();
 				break;
 			case 2:
-				repeat = false;
 				createFood();
 				break;
 			case 3:
-				repeat = false;
 				createMerchandise();
 				break;
 			case 4:
-				repeat = false;
 				createEmployee();
 				break;
 			case 5:
-				repeat = false;
 				createSponsorship();
 				break;
 			case 6:
-				repeat = false;
 				createBookkeeping();
 				break;
+			case 7:
+				return;
 			default:
 				System.out.println("Please Enter a Valid Number:");
 			}
@@ -705,13 +702,12 @@ public class OptionSelector {
 		int sp = 0;
 
 		try {
-			
+
 			ps = con.prepareStatement("INSERT INTO Food1 VALUES(?,1,?)");
 
 			System.out.print("\nFood Name: ");
 			foodName = in.readLine();
 			ps.setString(1, foodName);
-
 
 			System.out.print("\nMaking Cost: ");
 			makingCost = Integer.parseInt(in.readLine());
@@ -720,23 +716,21 @@ public class OptionSelector {
 			ps.executeUpdate();
 
 			con.commit();
-		
 
 		} catch (SQLException e) {
 			return;
 		} catch (IOException e) {
 			System.out.print("IO Exception...");
 		}
-		
-		
+
 		try {
 			System.out.print("\nSelling Price: ");
 			sp = Integer.parseInt(in.readLine());
-			
+
 			ps = con.prepareStatement("INSERT INTO Food2 VALUES(?,?)");
 			ps.setInt(1, makingCost);
 			ps.setInt(2, sp);
-			
+
 			ps.executeUpdate();
 
 			con.commit();
@@ -745,16 +739,16 @@ public class OptionSelector {
 		} catch (IOException e) {
 			System.out.print("IO Exception...");
 		}
-		
+
 		try { // F_sells(Event_Id, FoodName, Quantity)
 			int eventid = 0;
-			System.out.print("\nThe event that the food sells in: ");
+			System.out.print("\nThe event ID that the food sells in: ");
 			eventid = Integer.parseInt(in.readLine());
-			
+
 			ps = con.prepareStatement("INSERT INTO F_sells VALUES(?,?,0)");
 			ps.setInt(1, eventid);
 			ps.setString(2, foodName);
-			
+
 			ps.executeUpdate();
 
 			con.commit();
@@ -795,16 +789,15 @@ public class OptionSelector {
 		} catch (IOException e) {
 			System.out.print("IO Exception...");
 		}
-		
-		
+
 		try {
 			System.out.print("\nSelling Price: ");
 			sp = Integer.parseInt(in.readLine());
-			
+
 			ps = con.prepareStatement("INSERT INTO Merchandise2 VALUES(?,?)");
 			ps.setInt(1, makingCost);
 			ps.setInt(2, sp);
-			
+
 			ps.executeUpdate();
 
 			con.commit();
@@ -813,16 +806,16 @@ public class OptionSelector {
 		} catch (IOException e) {
 			System.out.print("IO Exception...");
 		}
-		
+
 		try { // M_sells(Event_Id, FoodName, Quantity)
 			int eventid = 0;
-			System.out.print("\nThe event that the merchandise sells in: ");
+			System.out.print("\nThe event ID that the merchandise sells in: ");
 			eventid = Integer.parseInt(in.readLine());
-			
+
 			ps = con.prepareStatement("INSERT INTO M_sells VALUES(?,?,0)");
 			ps.setInt(1, eventid);
 			ps.setString(2, merchandiseName);
-			
+
 			ps.executeUpdate();
 
 			con.commit();
@@ -917,32 +910,29 @@ public class OptionSelector {
 	private void deleteItem() {
 		boolean repeat = true;
 		System.out.println("Delete item selected.\n" + "What type of item would you like to delete?\n" + "1. Event\n"
-				+ "2. Food\n" + "3. Merchandise\n" + "4. Employee\n" + "5. Sponsorship");
+				+ "2. Food\n" + "3. Merchandise\n" + "4. Employee\n" + "5. Sponsorship\n" + "6. Return.\n");
 		System.out.print("Input: ");
 		input = scan.nextInt();
 		while (repeat) {
 
 			switch (input) {
 			case 1:
-				repeat = false;
 				deleteEvent();
 				break;
 			case 2:
-				repeat = false;
 				deleteFood();
 				break;
 			case 3:
-				repeat = false;
 				deleteMerchandise();
 				break;
 			case 4:
-				repeat = false;
 				deleteEmployee();
 				break;
 			case 5:
-				repeat = false;
 				deleteSponsorship();
 				break;
+			case 6:
+				return;
 			default:
 				System.out.println("Please Enter a Valid Number:");
 			}
@@ -1110,33 +1100,31 @@ public class OptionSelector {
 
 	private void viewItem() {
 		boolean repeat = true;
-		System.out.println("View item selected.\n" + "What type of item would you like to view?\n" + "1. Event\n"
-				+ "2. Food\n" + "3. Merchandise\n" + "4. Employee\n" + "5. Sponsorship");
-		System.out.print("Input: ");
-		input = scan.nextInt();
+		
 		while (repeat) {
-
+			System.out.println("View item selected.\n" + "What type of item would you like to view?\n" + "1. Event\n"
+					+ "2. Food\n" + "3. Merchandise\n" + "4. Employee\n" + "5. Sponsorship\n" + "6. Return.\n");
+			System.out.print("Input: ");
+			input = scan.nextInt();
+			
 			switch (input) {
 			case 1:
-				repeat = false;
 				viewEvent();
 				break;
 			case 2:
-				repeat = false;
 				viewFood();
 				break;
 			case 3:
-				repeat = false;
 				viewMerchandise();
 				break;
 			case 4:
-				repeat = false;
 				viewEmployee();
 				break;
 			case 5:
-				repeat = false;
 				viewSponsorship();
 				break;
+			case 6:
+				return;
 			default:
 				System.out.println("Please Enter a Valid Number:");
 			}
@@ -1146,12 +1134,11 @@ public class OptionSelector {
 	// view event
 
 	private void viewEvent() {
-		String Event_id;
+		int Event_id;
 		String EventName;
 		String StartTime;
 		String EndTime;
-		String TicketSold;
-		String EDate;
+		int TicketSold;
 		ResultSet rs;
 		Statement s;
 
@@ -1160,42 +1147,35 @@ public class OptionSelector {
 
 			rs = s.executeQuery("SELECT * FROM Stadium_Events");
 
-			ResultSetMetaData rsmd = rs.getMetaData();
-			int numCols = rsmd.getColumnCount();
-
-			System.out.println(" ");
-
-			for (int i = 0; i < numCols; i++) {
-				System.out.printf("%-10s", rsmd.getColumnName(i + 1));
-			}
-
-			System.out.println(" ");
-
 			while (rs.next()) {
-				Event_id = rs.getString("Event_id");
-				System.out.printf("%-20.20s", Event_id);
+				Event_id = rs.getInt("Event_id");
 
 				EventName = rs.getString("EventName");
-				System.out.printf("%-15.15s", EventName);
 
 				StartTime = rs.getString("StartTime");
-				System.out.printf("%-30.30s", StartTime);
 
 				EndTime = rs.getString("EndTime");
-				System.out.printf("%-30.30s", EndTime);
 
-				TicketSold = rs.getString("TicketSold");
-				System.out.printf("%-15.15s", TicketSold);
-
-				EDate = rs.getString("EDate");
-				System.out.printf("%-15.15s\n", EDate);
-
+				TicketSold = rs.getInt("TicketSold");
+				
+				System.out.println("Event_id: " + Event_id + "   EventName: " + EventName.trim() + "  StartTime: " + StartTime.trim() + "   EndTime: " + EndTime.trim() + "   Ticket Sold: " + TicketSold);
 			}
 
 			s.close();
 
 		} catch (SQLException e) {
 			System.out.println("Message: " + e.getMessage());
+		}
+		int input;
+
+		System.out.println("\n0: Return.\n");
+		System.out.print("Input: ");
+		input = scan.nextInt();
+
+		while (input != 0) {
+			System.out.println("\n0: Return.\n");
+			System.out.print("Input: ");
+			input = scan.nextInt();
 		}
 	}
 
@@ -1241,6 +1221,17 @@ public class OptionSelector {
 		} catch (SQLException e) {
 			System.out.println("Message: " + e.getMessage());
 		}
+		int input;
+
+		System.out.println("\n0: Return.\n");
+		System.out.print("Input: ");
+		input = scan.nextInt();
+
+		while (input != 0) {
+			System.out.println("\n0: Return.\n");
+			System.out.print("Input: ");
+			input = scan.nextInt();
+		}
 	}
 
 	// view Merchandise
@@ -1283,6 +1274,17 @@ public class OptionSelector {
 
 		} catch (SQLException e) {
 			System.out.println("Message: " + e.getMessage());
+		}
+		int input;
+
+		System.out.println("\n0: Return.\n");
+		System.out.print("Input: ");
+		input = scan.nextInt();
+
+		while (input != 0) {
+			System.out.println("\n0: Return.\n");
+			System.out.print("Input: ");
+			input = scan.nextInt();
 		}
 	}
 
@@ -1335,6 +1337,17 @@ public class OptionSelector {
 
 		} catch (SQLException e) {
 			System.out.println("Message: " + e.getMessage());
+		}
+		int input;
+
+		System.out.println("\n0: Return.\n");
+		System.out.print("Input: ");
+		input = scan.nextInt();
+
+		while (input != 0) {
+			System.out.println("\n0: Return.\n");
+			System.out.print("Input: ");
+			input = scan.nextInt();
 		}
 	}
 
@@ -1459,6 +1472,18 @@ public class OptionSelector {
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
+		
+		int input;
+
+		System.out.println("\n0: Return.\n");
+		System.out.print("Input: ");
+		input = scan.nextInt();
+
+		while (input != 0) {
+			System.out.println("\n0: Return.\n");
+			System.out.print("Input: ");
+			input = scan.nextInt();
+		}
 
 	}
 
@@ -1491,10 +1516,7 @@ public class OptionSelector {
 			while (rs.next()) {
 				employeeID = rs.getInt(1);
 				employeeName = rs.getString(2);
-				System.out.printf("Employee ID: ");
-				System.out.printf("%-15.15s\n", employeeID);
-				System.out.printf("Employee Name: ");
-				System.out.printf("%-15.15s\n", employeeName);
+				System.out.println("Employee ID: " + employeeID + "   Employee Name: " + employeeName);
 			}
 
 			con.commit();
@@ -1504,6 +1526,18 @@ public class OptionSelector {
 		} catch (SQLException e) {
 			System.out.println("Message: " + e.getMessage());
 
+		}
+		
+		int input;
+
+		System.out.println("\n0: Return.\n");
+		System.out.print("Input: ");
+		input = scan.nextInt();
+
+		while (input != 0) {
+			System.out.println("\n0: Return.\n");
+			System.out.print("Input: ");
+			input = scan.nextInt();
 		}
 	}
 
@@ -1532,7 +1566,7 @@ public class OptionSelector {
 		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 
 		try {
-			ps = con.prepareStatement("INSERT INTO WorksAt VALUES (?,?,?)");
+			ps = con.prepareStatement("INSERT INTO WorksAt VALUES (?,?,1)");
 
 			System.out.print("\nEmployee ID: ");
 			employeeID = Integer.parseInt(in.readLine());
@@ -1541,10 +1575,6 @@ public class OptionSelector {
 			System.out.print("\nEvent ID: ");
 			eventID = Integer.parseInt(in.readLine());
 			ps.setInt(2, eventID);
-
-			System.out.print("\nAvailability: ");
-			availability = Integer.parseInt(in.readLine());
-			ps.setInt(3, availability);
 
 			ps.executeUpdate();
 
@@ -1613,19 +1643,25 @@ public class OptionSelector {
 				ps.close();
 
 			} catch (SQLException ex) {
-				System.out.println("Message: " + ex.getMessage());
+				return;
 			}
 
 		} catch (SQLException e) {
-			System.out.println("Message: " + e.getMessage());
-			try {
-				con.rollback();
-			} catch (SQLException e1) {
-				System.out.println("Message: " + e1.getMessage());
-				System.exit(-1);
-			}
+			return;
 		} catch (IOException e) {
 			System.out.print("IO Exception...");
+		}
+		
+		int input;
+
+		System.out.println("\n0: Return.\n");
+		System.out.print("Input: ");
+		input = scan.nextInt();
+
+		while (input != 0) {
+			System.out.println("\n0: Return.\n");
+			System.out.print("Input: ");
+			input = scan.nextInt();
 		}
 	}
 
@@ -1673,19 +1709,12 @@ public class OptionSelector {
 
 				ps.setString(1, companyName);
 
-				System.out.print(companyName);
-
 				ResultSet rs = ps.executeQuery();
 				float donation = (float) 0;
 
-				while (rs.next()) {
+				if (rs.next()) {
 					donation = rs.getFloat(2);
-					System.out.println("\nDonations: " + donation);
-					System.out.print("xxx");
 				}
-				// System.out.println("\nDonations: " + donation);
-				// commit work
-				// con.commit();
 
 				// get the date of the event
 				ps = con.prepareStatement("SELECT Edate FROM Stadium_Events WHERE Event_id = ?");
@@ -1769,6 +1798,17 @@ public class OptionSelector {
 		} catch (SQLException e) {
 			System.out.println("Message: " + e.getMessage());
 		}
+		int input;
+
+		System.out.println("\n0: Return.\n");
+		System.out.print("Input: ");
+		input = scan.nextInt();
+
+		while (input != 0) {
+			System.out.println("\n0: Return.\n");
+			System.out.print("Input: ");
+			input = scan.nextInt();
+		}
 	}
 
 	// given date should return bookkeeping record for that day
@@ -1803,33 +1843,13 @@ public class OptionSelector {
 
 			rs = s.executeQuery("SELECT * FROM BookKeeping1");
 
-			ResultSetMetaData rsmd = rs.getMetaData();
-			int numCols = rsmd.getColumnCount();
-
-			System.out.println(" ");
-
-			for (int i = 0; i < numCols; i++) {
-				System.out.printf("%-15s", rsmd.getColumnName(i + 1));
-			}
-
-			System.out.println(" ");
-
 			while (rs.next()) {
 				EDate = rs.getString("EDate");
-				System.out.printf("%-25.25s", EDate);
-
 				Income = rs.getString("Income");
-				System.out.printf("%-10.10s", Income);
-
 				Expense = rs.getString("Expense");
-				System.out.printf("%-10.10s", Expense);
-
-				Attendence = rs.getString("Attendence");
-				System.out.printf("%-10.10s", Attendence);
-
 				NetIncome = rs.getString("NetIncome");
-
-				System.out.printf("%-10.10s\n", NetIncome);
+				
+				System.out.println("Date: " + EDate.trim() + "   Income: " + Income.trim() + "   Expense: " + Expense.trim() + "   NetIncome: " + NetIncome.trim());
 
 			}
 
@@ -1837,6 +1857,18 @@ public class OptionSelector {
 
 		} catch (SQLException e) {
 			System.out.println("Message: " + e.getMessage());
+		}
+		
+		int input;
+
+		System.out.println("\n0: Return.\n");
+		System.out.print("Input: ");
+		input = scan.nextInt();
+
+		while (input != 0) {
+			System.out.println("\n0: Return.\n");
+			System.out.print("Input: ");
+			input = scan.nextInt();
 		}
 	}
 
@@ -2192,7 +2224,6 @@ public class OptionSelector {
 			if (rs.next())
 				sqlDate = rs.getDate(1);
 			utilDate.setTime(sqlDate.getTime());
-			System.out.println(fm.format(utilDate));
 
 			// update the Income in bookkeeping of that specific date
 			ps = con.prepareStatement("UPDATE BookKeeping1 SET Income = Income + ? WHERE Edate = ?");
@@ -2332,7 +2363,6 @@ public class OptionSelector {
 			if (rs.next())
 				sqlDate = rs.getDate(1);
 			utilDate.setTime(sqlDate.getTime());
-			System.out.println(fm.format(utilDate));
 
 			// update the Income in bookkeeping of that specific date
 			ps = con.prepareStatement("UPDATE BookKeeping1 SET Income = Income + ? WHERE Edate = ?");
@@ -2469,7 +2499,6 @@ public class OptionSelector {
 			if (rs.next())
 				sqlDate = rs.getDate(1);
 			utilDate.setTime(sqlDate.getTime());
-			System.out.println(fm.format(utilDate));
 
 			// update the Income in bookkeeping of that specific date
 			ps = con.prepareStatement("UPDATE BookKeeping1 SET Income = Income + ? WHERE Edate = ?");
@@ -2589,7 +2618,6 @@ public class OptionSelector {
 		}
 	}
 
-	// 10: nestedAggregation
 	// find the average number of times sold per day
 	private void nestedAggregation() {
 		int input = 0;
