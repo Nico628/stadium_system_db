@@ -166,7 +166,7 @@ public class OptionSelector {
 		}
 
 		// =======Ask for what type of tickets======
-		System.out.println("\nEnter 1 For VIP Ticket, 0 For Normal Ticket:");
+		System.out.println("\nEnter 1 For VIP Ticket($100), 0 For Normal Ticket($50):");
 		System.out.print("Input: ");
 		input = scan.nextInt();
 
@@ -486,12 +486,14 @@ public class OptionSelector {
 
 	private void createItem() {
 		boolean repeat = true;
-		System.out.println("Create item selected.\n" + "What type of item would you like to create?\n" + "1. Event\n"
-				+ "2. Food\n" + "3. Merchandise\n" + "4. Employee\n" + "5. Sponsorship\n" + "6. Bookkeeping\n"
-				+ "7. Return.\n");
-		System.out.print("Input: ");
-		input = scan.nextInt();
+		
 		while (repeat) {
+			
+			System.out.println("Create item selected.\n" + "What type of item would you like to create?\n" + "1. Event\n"
+					+ "2. Food\n" + "3. Merchandise\n" + "4. Employee\n" + "5. Sponsorship\n" + "6. Bookkeeping\n"
+					+ "7. Return.\n");
+			System.out.print("Input: ");
+			input = scan.nextInt();
 
 			switch (input) {
 			case 1:
@@ -922,11 +924,13 @@ public class OptionSelector {
 
 	private void deleteItem() {
 		boolean repeat = true;
-		System.out.println("Delete item selected.\n" + "What type of item would you like to delete?\n" + "1. Event\n"
-				+ "2. Food\n" + "3. Merchandise\n" + "4. Employee\n" + "5. Sponsorship\n" + "6. Return.\n");
-		System.out.print("Input: ");
-		input = scan.nextInt();
+		
 		while (repeat) {
+			
+			System.out.println("Delete item selected.\n" + "What type of item would you like to delete?\n" + "1. Event\n"
+					+ "2. Food\n" + "3. Merchandise\n" + "4. Employee\n" + "5. Sponsorship\n" + "6. Return.\n");
+			System.out.print("Input: ");
+			input = scan.nextInt();
 
 			switch (input) {
 			case 1:
